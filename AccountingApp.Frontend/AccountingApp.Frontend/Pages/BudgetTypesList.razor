@@ -1,0 +1,52 @@
+﻿@page "/budget/type"
+
+@inherits BudgetModelList<BudgetType, BudgetTypeViewModel>
+
+@inject IBudgetTypes BudgetTypeRepository
+
+<MudContainer MaxWidth="MaxWidth.Medium">
+    <MudTable Items="@ViewModelItems" Hover="true" Breakpoint="Breakpoint.None" Elevation="1" Height="80vh">
+        <ColGroup>
+            <col />
+            <col class="button-column" />
+        </ColGroup>
+        <RowTemplate>
+            <MudTd>@context.Name</MudTd>
+            <MudTd>
+                <DeleteItemButton OnClick="@(async () => await Delete(context))" />
+            </MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager DisableRowsPerPage="true"/>
+        </PagerContent>
+    </MudTable>
+</MudContainer>
+
+<MudFab Class="button-fab" Size="Size.Large" IconSize="Size.Medium" 
+        Color="Color.Primary" Icon="@Icons.Material.Filled.Add"
+        OnClick="@OpenCreateDialog"  />
+
+@code {
+
+    protected override IBudgetTypes Repository => BudgetTypeRepository;
+
+    protected override async Task InitializeItemsList()
+    {
+        var (budgetTypes, result) = await BudgetTypeRepository.GetAll();
+        await ProcessResult(result);
+        if (result != AccountingApiResult.Ok)
+        {
+            return;
+        }
+        ViewModelItems = Mapper.Map<List<BudgetTypeViewModel>>(budgetTypes);
+    }
+
+    protected async Task OpenCreateDialog()
+    {
+        await DialogService.Show<CreateType>(async () =>
+        {
+            await InitializeItemsList();
+            StateHasChanged();
+        }, BudgetTypeRepository);
+    }
+}

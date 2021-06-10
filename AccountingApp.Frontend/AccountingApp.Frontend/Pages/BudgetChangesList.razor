@@ -1,0 +1,149 @@
+﻿@page "/budget/change"
+
+@inherits BudgetModelList<BudgetChange, BudgetChangeViewModel>
+
+@inject IBudgetChanges BudgetChangeRepository
+@inject IBudgetTypes BudgetTypeRepository
+
+
+<style>
+    .input-container {
+    }
+    .input-container > * {
+        width: 100%;
+        max-width: 30em;
+        min-width: 15em;
+    }
+</style>
+
+<MudContainer Class="input-container" MaxWidth="ContentMaxWidth">
+    <DatePicker Class="my-2"
+                Date="DateFrom" DateChanged="@SetFromDate" Label="From"/>
+    <DatePicker Class="my-2"
+                Date="DateTo" DateChanged="@SetToDate" Label="To"/>
+</MudContainer>
+
+<MudContainer MaxWidth="ContentMaxWidth" >
+    <MudTable Items="@ViewModelItems" Hover="true" Breakpoint="Breakpoint.Xs" Elevation="1"
+              Height="66vh" RowsPerPage="9" FixedHeader="true">
+        <ColGroup>
+            <col style="min-width:17em"/>
+            <col />
+            <col style="min-width:8em"/>
+            <col class="button-column"/>
+        </ColGroup>
+        <HeaderContent>
+            <MudTh>Category</MudTh>
+            <MudTh>Date</MudTh>
+            <MudTh>Amount $</MudTh>
+            <MudTh>Edit/Delete</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Category">@context.BudgetType.Name</MudTd>
+            <MudTd DataLabel="Date">@(context.Date?.ToShortDateString() ?? "-")</MudTd>
+            <MudTd DataLabel="Amount $">@context.AmountInDollars</MudTd>
+            <MudTd>
+                <MudElement Class="d-flex justify-right justify-sm-space-around">
+                    <EditItemButton OnClick="@(async () => await OpenEditDialog(context))" />
+                    <DeleteItemButton OnClick="@(async () => await Delete(context))" />
+                </MudElement>
+            </MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager DisableRowsPerPage="true"/>
+        </PagerContent>
+    </MudTable>
+</MudContainer>
+
+<MudFab Class="button-fab" Size="Size.Large" IconSize="Size.Medium" 
+        Color="Color.Primary" Icon="@Icons.Material.Filled.Add"
+        OnClick="@OpenCreateDialog"  />
+
+@code {      
+
+    protected override IBudgetChanges Repository => BudgetChangeRepository;
+
+    private const MaxWidth ContentMaxWidth = MaxWidth.Large;
+
+    private DateTime? PickerDateFrom { get; set; } = DateTime.Today;
+    private DateTime? PickerDateTo { get; set; } = DateTime.Today;
+
+    private DateTime DateFrom => PickerDateFrom ?? DateTime.Today;
+    private DateTime DateTo => PickerDateTo ?? DateTime.Today;
+
+    private BudgetChangeViewModel SelectedBudgetChange { get; set; }
+    private IEnumerable<BudgetTypeViewModel> BudgetTypes { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!(await Account.TrySetAccessToken(BudgetChangeRepository)) ||
+            !(await Account.TrySetAccessToken(BudgetTypeRepository)))
+        {
+            NavigationManager.NavigateToAuthentification();
+            return;
+        }
+        await InitializeBudgetTypesList();
+        await InitializeItemsList();
+    }
+
+    protected override async Task InitializeItemsList()
+    {
+        var (budgetChanges, result) = await Repository.GetBetweenDates(DateFrom, DateTo);
+        await ProcessResult(result);
+        if (result != AccountingApiResult.Ok)
+        {
+            return;
+        }
+        ViewModelItems = Mapper.Map<List<BudgetChangeViewModel>>(budgetChanges);
+    }
+
+    private async Task OpenEditDialog(BudgetChangeViewModel budgetChange)
+    {
+        await DialogService.Show<EditBudgetChange>(
+            async () =>
+            {
+                await InitializeItemsList();
+                StateHasChanged();
+            },
+            BudgetTypeRepository,
+            BudgetChangeRepository,
+            budgetChange
+        );
+    }
+
+    private async Task OpenCreateDialog()
+    {
+        await DialogService.Show<CreateBudgetChange>(
+            async () =>
+            {
+                await InitializeItemsList();
+                StateHasChanged();
+            },
+            BudgetTypeRepository,
+            BudgetChangeRepository
+        );
+    }
+
+    private async Task SetFromDate(DateTime? date)
+    {
+        PickerDateFrom = date;
+        await InitializeItemsList();
+    }
+
+    private async Task SetToDate(DateTime? date)
+    {
+        PickerDateTo = date;
+        await InitializeItemsList();
+    }
+
+    private async Task InitializeBudgetTypesList()
+    {
+        var (budgetTypes, result) = await BudgetTypeRepository.GetAll();
+        await ProcessResult(result);
+        if (result != AccountingApiResult.Ok)
+        {
+            return;
+        }
+        BudgetTypes = Mapper.Map<IEnumerable<BudgetTypeViewModel>>(budgetTypes);
+    }
+}

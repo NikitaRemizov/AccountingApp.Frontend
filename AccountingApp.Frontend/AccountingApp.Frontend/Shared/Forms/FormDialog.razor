@@ -1,0 +1,26 @@
+﻿
+
+<MudDialog Class="pa-1 mx-1 account-form" ClassContent="my-10">
+    <TitleContent>
+        <MudText Typo="@Typo.h5" Align="@Align.Center" >
+            @Header
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudFocusTrap DefaultFocus="@DefaultFocus.FirstChild">
+            @Form
+        </MudFocusTrap>
+    </DialogContent>
+    <DialogActions>
+        @Buttons
+    </DialogActions>
+ </MudDialog>
+
+@code {
+    [Parameter] 
+    public string Header { get; set; }
+    [Parameter] 
+    public RenderFragment Form { get; set; }
+    [Parameter] 
+    public RenderFragment Buttons { get; set; }
+}

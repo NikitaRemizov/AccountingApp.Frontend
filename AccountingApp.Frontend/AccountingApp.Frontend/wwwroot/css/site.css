@@ -1,0 +1,25 @@
+﻿body {
+    overflow:hidden;
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+}
+
+.account-form {
+    width: 500px;
+}
+
+.button-fab {
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    z-index: 1700;
+}
+
+.button-column {
+    width: 20px;
+}
+

@@ -1,0 +1,13 @@
+﻿@inherits FieldBase
+
+<MudDatePicker Date="@Date" DateChanged="@DateChanged" 
+               Class="@Class" DateFormat="d" Label="@Label" PickerVariant="PickerVariant.Dialog" />
+
+@code {
+    [Parameter]
+    public DateTime? Date { get; set; }
+    [Parameter]
+    public EventCallback<DateTime?> DateChanged { get; set; }
+    [Parameter]
+    public string Label { get; set; }
+}

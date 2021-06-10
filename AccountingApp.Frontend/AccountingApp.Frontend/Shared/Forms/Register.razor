@@ -1,0 +1,46 @@
+﻿@using AccountingApp.Frontend.Shared.Forms.Fields;
+@using AccountingApp.Frontend.Shared.Forms.Abstract;
+
+@inherits AccountForm
+
+<FormDialog Header="Register">
+    <Form>
+        <MudForm Model="@User" @bind-IsValid="@_isValidationSuccessful">
+            <EmailField @bind-User="@User" />
+            <PasswordField @bind-User="@User" />
+            <RepeatPasswordField Password="@User.Password" />
+        </MudForm>
+    </Form>
+    <Buttons>
+        <MudButton Variant="Variant.Text" Color="Color.Secondary" Class="mr-auto"
+                   OnClick="@OpenLoginDialog">
+            Login
+        </MudButton>
+        <MudButton Variant="Variant.Text" Color="Color.Primary" Class="ml-2"
+                   OnClick="@HandleUserSubmit" Disabled="@(!_isValidationSuccessful)">
+            Register
+        </MudButton>
+    </Buttons>
+</FormDialog>
+
+<MudOverlay Visible="IsOverlayVisible" DarkBackground="true" Absolute="true">
+    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+</MudOverlay>
+
+@code { 
+
+    private bool IsOverlayVisible { get; set; }
+
+    protected override async Task SignOperation()
+    {
+        IsOverlayVisible = true;
+        await Account.Register(User);
+        IsOverlayVisible = false;
+    }
+
+    protected void OpenLoginDialog()
+    {
+        MudDialog.Close();
+        DialogService.Show<Login>();
+    }
+}

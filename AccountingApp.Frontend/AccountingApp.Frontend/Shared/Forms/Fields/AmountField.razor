@@ -1,0 +1,17 @@
+﻿@using System.Globalization;
+
+@inherits FieldBase
+
+<MudNumericField @bind-Value="@BudgetChange.AmountInDollars" T="double" 
+                 Immediate="true"  HideSpinButtons="true"
+                 Class="@Class" Adornment="Adornment.Start" AdornmentText="$" Label="Amount"
+                 Required="true" />
+
+@code {
+
+    [Parameter]
+    public BudgetChangeViewModel BudgetChange { get; set; }
+
+    [Parameter]
+    public EventCallback<BudgetChangeViewModel> BudgetChangeChanged { get; set; }
+}

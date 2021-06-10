@@ -1,0 +1,47 @@
+﻿@using AccountingApp.Frontend.Shared.Forms.Fields;
+@using AccountingApp.Frontend.Shared.Forms.Abstract;
+
+@inherits EditBudgetModelBase<BudgetChange, BudgetChangeViewModel>
+
+<FormDialog Header="Edit income/outcome">
+    <Form>
+        <MudForm Model="@ViewModel" @bind-IsValid="@IsValidationSuccessful">
+            <TypeSelectField @bind-BudgetChange="ViewModel" BudgetTypes="BudgetTypes" />
+            <AmountField @bind-BudgetChange="@ViewModel" />
+            <DatePicker @bind-Date="@ViewModel.Date"/>
+        </MudForm>
+    </Form>
+    <Buttons>
+        <MudButton Variant="Variant.Text" Color="Color.Primary" Class="ml-2"
+                   OnClick="@HandleUserSubmit" Disabled="@(!IsValidationSuccessful)">
+            Create
+        </MudButton>
+    </Buttons>
+</FormDialog>
+
+@code {
+
+    public IEnumerable<BudgetTypeViewModel> BudgetTypes { get; set; }
+
+    [Parameter]
+    public BudgetTypes BudgetTypeRepository
+    {
+        get { return _budgetTypeRepository ?? throw new ArgumentNullException(); }
+        set { _budgetTypeRepository = value; }
+    }
+
+    private BudgetTypes _budgetTypeRepository;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ViewModel.Date = DateTime.Today;
+        BudgetTypes = Mapper.Map<IEnumerable<BudgetTypeViewModel>>(await GetTypes());
+    }
+
+    private async Task<IEnumerable<BudgetType>> GetTypes()
+    {
+        var (budgetTypes, result) = await BudgetTypeRepository.GetAll();
+        await ProcessResult(result, "The category information is not retreived");
+        return budgetTypes;
+    }
+}

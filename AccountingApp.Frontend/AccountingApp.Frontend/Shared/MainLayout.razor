@@ -1,0 +1,64 @@
+﻿@inherits LayoutComponentBase
+@implements IDisposable
+
+@inject IDialogService DialogService
+@inject NavigationManager NavigationManager
+@inject IAccountService Account
+
+<MudThemeProvider />
+
+<MudLayout Class="outer">
+    <MudAppBar Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" 
+                       OnClick="@((e) => DrawerToggle())" />
+        <MudText Typo="Typo.h5" Class="ml-3">Accounting</MudText>
+        <MudAppBarSpacer />
+        @if (Account.IsAuthentificated)
+        {
+            <MudIconButton Icon="@Icons.Material.Filled.Logout" Color="Color.Inherit" 
+                           OnClick="@(Logout)" />
+        }
+        else
+        {
+            <MudIconButton Class="mr-1" Icon="@Icons.Material.Filled.Login" Color="Color.Inherit" 
+                           OnClick="@(() => DialogService.Show<Login>())" />
+            <MudIconButton Icon="@Icons.Material.Filled.HowToReg" Color="Color.Inherit" 
+                           OnClick="@(() => DialogService.Show<Register>())" />
+        }
+    </MudAppBar>
+    @if (Account.IsAuthentificated)
+    {
+        <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
+            <NavMenu />
+        </MudDrawer>
+    }
+    <MudMainContent Class="mt-5 px-5">
+        @Body
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    private bool _drawerOpen = true;
+
+    public void Dispose()
+    {
+        Account.OnIsAuthentificatedChanged -= StateHasChanged;
+    }
+
+    protected override void OnInitialized()
+    {
+        Account.OnIsAuthentificatedChanged += StateHasChanged;
+    }
+
+    private void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+
+    private async Task Logout()
+    {
+        await Account.Logout();
+        NavigationManager.NavigateToAuthentification();
+        StateHasChanged();
+    }
+}

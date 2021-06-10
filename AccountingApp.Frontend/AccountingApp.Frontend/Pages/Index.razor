@@ -1,0 +1,19 @@
+﻿@page "/"
+
+@inject IDialogService DialogService
+
+<MudText Class="d-flex justify-center" Typo="Typo.h3">
+    Hello, Please login
+</MudText>
+
+@code { 
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            return;
+        }
+        DialogService.Show<Login>();
+    }
+}

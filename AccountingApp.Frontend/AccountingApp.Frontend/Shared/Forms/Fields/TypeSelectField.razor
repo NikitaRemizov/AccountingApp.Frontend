@@ -1,0 +1,24 @@
+﻿@inherits FieldBase
+
+<MudSelect @bind-Value="@BudgetChange.BudgetType" Class="Class" FullWidth="true" 
+           Label="Category" ToStringFunc="@(type => type?.Name)" Direction="Direction.Top">
+    @if (BudgetTypes is not null)
+    {
+        @foreach (var type in BudgetTypes)
+        {
+            <MudSelectItem Value="@type"/>
+        }
+    }
+</MudSelect>
+
+@code {
+
+    [Parameter]
+    public BudgetChangeViewModel BudgetChange { get; set; }
+
+    [Parameter]
+    public EventCallback<BudgetChangeViewModel> BudgetChangeChanged { get; set; }
+
+    [Parameter]
+    public IEnumerable<BudgetTypeViewModel> BudgetTypes { get; set; }
+}

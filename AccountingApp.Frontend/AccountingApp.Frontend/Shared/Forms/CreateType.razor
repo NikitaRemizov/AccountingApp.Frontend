@@ -1,0 +1,18 @@
+﻿@using AccountingApp.Frontend.Shared.Forms.Fields;
+@using AccountingApp.Frontend.Shared.Forms.Abstract;
+
+@inherits CreateBudgetModelBase<BudgetType, BudgetTypeViewModel>
+
+<FormDialog Header="Create new category">
+    <Form>
+        <MudForm Model="@ViewModel" @bind-IsValid="@IsValidationSuccessful">
+            <TypeTextField @bind-BudgetType="@ViewModel"></TypeTextField>
+        </MudForm>
+    </Form>
+    <Buttons>
+        <MudButton Variant="Variant.Text" Color="Color.Primary" Class="ml-2"
+                   OnClick="@HandleUserSubmit" Disabled="@(!IsValidationSuccessful)">
+            Create
+        </MudButton>
+    </Buttons>
+</FormDialog>

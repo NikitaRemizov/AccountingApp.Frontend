@@ -1,0 +1,177 @@
+﻿@using System.Linq;
+
+@inherits DataAccessComponent
+
+@inject IBudgetChanges BudgetChangeRepository
+@inject IAccountService Account
+@inject IMapper Mapper
+
+@page "/report"
+
+<MudContainer MaxWidth="@MaxContentWidth">
+    <MudButton Color="@Color.Primary" OnClick="@SwitchReportTimeSpan">
+        @ReportTimeSpan
+    </MudButton>
+
+    <MudButton Color="@Color.Primary" OnClick="@SwitchReportType">
+        @ReportType
+    </MudButton>
+</MudContainer>
+
+@if (IncomeReport is null || ExpenseReport is null || !IncomeReport.Any() && !ExpenseReport.Any())
+{
+    <MudContainer Class="d-flex justify-center" MaxWidth="@MaxContentWidth">
+        <MudText Class="my-3" Typo="Typo.h5">
+            There is no data
+        </MudText>
+    </MudContainer>
+}
+else
+{
+    <MudContainer MaxWidth="@MaxContentWidth" Class="main-grid mt-2" >
+        <MudGrid Class="align-content-center">
+            <MudItem Class="d-flex-column align-center" xs="12" md="5">
+                <MudContainer MaxWidth="MaxWidth.ExtraSmall">
+                    <MudCard Class="mb-4 " Style="overflow:hidden" Elevation="@ElevationLevel">
+                        <MudCardContent>
+                            <MudText Align="Align.Center" Typo="Typo.h5">
+                                Total $@(TotalText)
+                            </MudText>
+                        </MudCardContent>
+                    </MudCard>
+                </MudContainer>
+                <MudChart Class="justify-center" ChartType="@ChartType.Pie"
+                          Width="50%"
+                          InputData="@ChartData" @bind-SelectedIndex="@SelectedChartItemIndex"
+                          InputLabels="@ChartLabels" >
+                </MudChart>
+            </MudItem>
+            <MudItem Class="align-center" xs="12" md="7">
+                <MudContainer MaxWidth="MaxWidth.Large">
+                    <MudPaper Elevation="@ElevationLevel">
+                        <MudTable Items="@ReportShown" Breakpoint="Breakpoint.None" Style="align-items:baseline">
+                            <ColGroup>
+                                <col style="width: 50%" />
+                                <col style="width: 50%" />
+                            </ColGroup>
+                            <HeaderContent>
+                                <MudTh>Category</MudTh>
+                                <MudTh>Amount $</MudTh>
+                            </HeaderContent>
+                            <RowTemplate>
+                                <MudTd>@context.BudgetTypeName</MudTd>
+                                <MudTd>@context.AmountInDollars.ToString("F")</MudTd>
+                            </RowTemplate>
+                            <FooterContent>
+                            </FooterContent>
+                        </MudTable>
+                    </MudPaper>
+                </MudContainer>
+            </MudItem>
+        </MudGrid>
+    </MudContainer>
+}
+
+
+@code {
+
+    private const MaxWidth MaxContentWidth = MaxWidth.False;
+
+    private const int ElevationLevel = 1;
+    private const string Untyped = "UNCATEGORIZED";
+
+    private IEnumerable<BudgetReport> IncomeReport { get; set; }
+    private IEnumerable<BudgetReport> ExpenseReport { get; set; }
+    private IEnumerable<BudgetReport> ReportShown => ReportType switch
+    {
+        ReportType.Expense => ExpenseReport,
+        _ => IncomeReport
+    };
+
+    private double[] ChartData => ReportShown?.Select(r => r.AmountInDollars).ToArray();
+    private string[] ChartLabels => ReportShown?.Select(r => r.BudgetTypeName).ToArray();
+    private string TotalText => ReportShown?.Sum(r => r.AmountInDollars).ToString("F");
+    private int SelectedChartItemIndex = -1;
+
+    private ReportTimeSpan ReportTimeSpan { get; set; } = ReportTimeSpan.Day;
+    private ReportType ReportType { get; set; } = ReportType.Income;
+
+    private async Task<(IEnumerable<BudgetChange>, AccountingApiResult)> GetBudgetChanges() => ReportTimeSpan switch
+    {
+        ReportTimeSpan.Day =>
+            await BudgetChangeRepository.GetForDate(DateTime.Today),
+        ReportTimeSpan.Month =>
+            await BudgetChangeRepository.GetBetweenDates(DateTime.Today.AddMonths(-1), DateTime.Today),
+        _ =>
+            (null, AccountingApiResult.Error)
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!(await Account.TrySetAccessToken(BudgetChangeRepository)))
+        {
+            NavigationManager.NavigateToAuthentification();
+            return;
+        }
+
+        await InitializeViewData();
+    }
+
+    private async Task InitializeViewData()
+    {
+        var (budgetChanges, result) = await GetBudgetChanges();
+        await ProcessResult(result);
+        if (result != AccountingApiResult.Ok)
+        {
+            return;
+        }
+        ChangeViewData(budgetChanges);
+    }
+
+    private void ChangeViewData(IEnumerable<BudgetChange> budgetChanges)
+    {
+        if (budgetChanges is null)
+        {
+            return;
+        }
+        var reportRecords = budgetChanges
+            .GroupBy(b => b.BudgetTypeId)
+            .Select(group => new BudgetReport
+            {
+                BudgetTypeName = group.First().BudgetTypeName ?? Untyped,
+                Amount = group.Sum(g => g.Amount)
+            });
+
+        IncomeReport = reportRecords
+            .Where(r => r.Amount > 0);
+        ExpenseReport = reportRecords
+            .Where(r => r.Amount < 0)
+            .Select(r =>
+            {
+                r.Amount *= -1;
+                return r;
+            });
+    }
+
+    private async Task SwitchReportTimeSpan()
+    {
+        ReportTimeSpan = ReportTimeSpan switch
+        {
+            ReportTimeSpan.Day => ReportTimeSpan.Month,
+            ReportTimeSpan.Month => ReportTimeSpan.Day,
+            _ => ReportTimeSpan.Day
+        };
+        await InitializeViewData();
+    }
+
+    private void SwitchReportType()
+    {
+        ReportType = ReportType switch
+        {
+            ReportType.Income => ReportType.Expense,
+            ReportType.Expense => ReportType.Income,
+            _ => ReportType.Income
+        };
+        StateHasChanged();
+    }
+}

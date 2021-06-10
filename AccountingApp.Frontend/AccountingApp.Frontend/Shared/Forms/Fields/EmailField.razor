@@ -1,0 +1,18 @@
+﻿@inherits FieldBase
+
+<MudTextField Label="Email" T="string" Class="@Class" @bind-Value="@User.Email" 
+              @oninput="@(async e => await UserChanged.InvokeAsync())"
+              InputType="InputType.Email" Immediate="true" DebounceInterval="100"
+              Validation="@(EmailValidation)" Required="true"/>
+
+@code {
+
+    [Parameter]
+    public User User { get; set; }
+
+    [Parameter]
+    public EventCallback<User> UserChanged { get; set; }
+
+    private EmailAddressAttribute EmailValidation =>
+        new EmailAddressAttribute() { ErrorMessage = "Invalid email address" };
+}

@@ -1,0 +1,11 @@
+﻿<MudNavMenu Class="py-3">
+    <MudNavLink Icon="@Icons.Rounded.FormatListBulleted" Href="/budget/type">Categories</MudNavLink>
+    <MudNavLink Icon="@Icons.Rounded.ListAlt" Href="/budget/change">Incomes/Expenses</MudNavLink>
+    <MudNavLink Icon="@Icons.Rounded.PieChart" Href="/report">Report</MudNavLink>
+</MudNavMenu>
+
+@code {
+
+    [Parameter]
+    public bool IsAuthentificated { get; set; }
+}

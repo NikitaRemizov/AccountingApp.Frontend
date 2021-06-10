@@ -1,0 +1,25 @@
+﻿
+<MudTextField Label="Category" T="string" Class="@Class" @bind-Value="@BudgetType.Name" 
+              @oninput="@(async e => await BudgetTypeChanged.InvokeAsync())"
+              InputType="InputType.Text" Immediate="true" DebounceInterval="100"
+              Validation="@BudgetTypeValidation" Required="true"/>
+
+@code {
+
+    private const int MaxLength = 15;
+
+    [Parameter]
+    public BudgetTypeViewModel BudgetType { get; set; }
+
+    [Parameter]
+    public EventCallback<BudgetTypeViewModel> BudgetTypeChanged { get; set; }
+
+    [Parameter]
+    public string Class { get; set; }
+
+    private MaxLengthAttribute BudgetTypeValidation =>
+        new MaxLengthAttribute(MaxLength) 
+        { 
+            ErrorMessage = $"The length must be less than {MaxLength + 1} characters" 
+        };
+}
