@@ -1,12 +1,23 @@
 ﻿@page "/"
 
 @inject IDialogService DialogService
+@inject IAccountService Account
+@inject NavigationManager NavigationManager
 
 <MudText Class="d-flex justify-center" Typo="Typo.h3">
     Hello, Please login
 </MudText>
 
 @code { 
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Account.InitializeToken();
+        if (Account.IsAuthentificated)
+        {
+            NavigationManager.NavigateTo("report");
+        }
+    }
 
     protected override void OnAfterRender(bool firstRender)
     {
