@@ -34,7 +34,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        ViewModel.Date = DateTime.Today;
+        ViewModel.Date ??= DateTime.Today;
         BudgetTypes = Mapper.Map<IEnumerable<BudgetTypeViewModel>>(await GetTypes());
     }
 

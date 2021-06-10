@@ -1,7 +1,7 @@
 ﻿@inherits FieldBase
 
 <MudSelect @bind-Value="@BudgetChange.BudgetType" Class="Class" FullWidth="true" 
-           Label="Category" ToStringFunc="@(type => type?.Name)" Direction="Direction.Top">
+           Label="Category" ToStringFunc="@(type => type?.Name)" Direction="Direction.Bottom">
     @if (BudgetTypes is not null)
     {
         @foreach (var type in BudgetTypes)
