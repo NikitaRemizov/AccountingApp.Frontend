@@ -8,7 +8,7 @@
         <MudForm Model="@User" @bind-IsValid="@_isValidationSuccessful">
             <EmailField @bind-User="@User" />
             <PasswordField @bind-User="@User" />
-            <RepeatPasswordField Password="@User.Password" />
+            <RepeatPasswordField @bind-User="@User" />
         </MudForm>
     </Form>
     <Buttons>
