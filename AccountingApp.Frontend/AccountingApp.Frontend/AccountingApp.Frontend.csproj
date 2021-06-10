@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\AccountingApp\AccountingApp\AccountingApp.Shared\AccountingApp.Shared.csproj" />
     <ProjectReference Include="..\AccountingApp.Frontend.DataAccess\AccountingApp.Frontend.DataAccess.csproj" />
   </ItemGroup>
 
