@@ -18,7 +18,7 @@
     </MudButton>
 </MudContainer>
 
-@if (IncomeReport is null || ExpenseReport is null || !IncomeReport.Any() && !ExpenseReport.Any())
+@if (!MustShowIncomeReport && !MustShowExpenseReport)
 {
     <MudContainer Class="d-flex justify-center" MaxWidth="@MaxContentWidth">
         <MudText Class="my-3" Typo="Typo.h5">
@@ -79,6 +79,11 @@ else
 
     private const int ElevationLevel = 1;
     private const string Untyped = "UNCATEGORIZED";
+
+    private bool MustShowIncomeReport 
+        => IncomeReport is not null && IncomeReport.Any() && ReportType == ReportType.Income;
+    private bool MustShowExpenseReport 
+        => ExpenseReport is not null && ExpenseReport.Any() && ReportType == ReportType.Expense;
 
     private IEnumerable<BudgetReport> IncomeReport { get; set; }
     private IEnumerable<BudgetReport> ExpenseReport { get; set; }
