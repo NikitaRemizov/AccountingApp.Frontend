@@ -9,17 +9,14 @@ namespace AccountingApp.Frontend.DataAccess.Repositories
 {
     public class BudgetTypes : BudgetModels<BudgetType>, IBudgetTypes
     {
-        private readonly ApiEndpoint _endpoint;
-
-        public BudgetTypes(WebApiClient<BudgetType> client, AccountingApiEndpoints apiEndpoints)
-            : base(client, apiEndpoints.BudgetType.Path)
+        public BudgetTypes(WebApiClient<BudgetType> client)
+            : base(client, "budget/type")
         {
-            _endpoint = apiEndpoints.BudgetType;
         }
 
         public async Task<(IEnumerable<BudgetType>, AccountingApiResult)> GetAll()
         {
-            return await Client.Get<List<BudgetType>>(_endpoint.Path);
+            return await Client.Get<List<BudgetType>>(_endpointPath);
         }
     }
 }

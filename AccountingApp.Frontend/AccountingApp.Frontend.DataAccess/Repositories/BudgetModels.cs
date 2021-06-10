@@ -9,7 +9,8 @@ namespace AccountingApp.Frontend.DataAccess.Repositories
 {
     public abstract class BudgetModels<T> : WebApiRepository<T>, IRepository<T> where T : BudgetModel
     {
-        private readonly string _endpointPath;
+        protected readonly string _endpointPath;
+
         private protected BudgetModels(WebApiClient<T> client, string endpointPath) 
             : base(client)
         {

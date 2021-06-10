@@ -37,18 +37,13 @@ namespace AccountingApp.Frontend
             services.AddScoped<WebApiClient<BudgetType>>();
             services.AddScoped<WebApiClient<BudgetChange>>();
 
-            var apiDescription = Configuration.GetSection("ApiDescription");
-
-            var baseUrl = new Uri(apiDescription.GetValue<string>("ApiBaseUrl"));
+            var baseUrl = new Uri(Configuration.GetValue<string>("ApiBaseUrl"));
             services.AddHttpClient<WebApiClient<User>>(
                 client => client.BaseAddress = baseUrl);
             services.AddHttpClient<WebApiClient<BudgetType>>(
                 client => client.BaseAddress = baseUrl);
             services.AddHttpClient<WebApiClient<BudgetChange>>(
                 client => client.BaseAddress = baseUrl);
-
-            var apiEndpoints = apiDescription.GetSection("Endpoints").Get<AccountingApiEndpoints>();
-            services.AddSingleton(apiEndpoints);
 
             var mapperConfiguration = new MapperConfiguration(cfg =>
             {

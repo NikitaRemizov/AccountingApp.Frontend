@@ -12,7 +12,7 @@ namespace AccountingApp.Frontend.Tests.DataAccess.RepositoryTests
 
         public BudgetTypesTests()
         {
-            Repository = new BudgetTypes(Client, ApiEndpoints);
+            Repository = new BudgetTypes(Client);
         }
 
         [Fact]

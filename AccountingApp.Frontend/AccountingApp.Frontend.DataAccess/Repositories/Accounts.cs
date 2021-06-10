@@ -9,22 +9,19 @@ namespace AccountingApp.Frontend.DataAccess.Repositories
 {
     public class Accounts : WebApiRepository<User>, IAccounts
     {
-        private readonly AccountingApiEndpoints _apiEndpoints;
-
-        public Accounts(WebApiClient<User> client, AccountingApiEndpoints apiEndpoints)
+        public Accounts(WebApiClient<User> client)
             : base(client)
         {
-            _apiEndpoints = apiEndpoints;
         }
 
         public async Task<(AccessToken, AccountingApiResult)> Login(User user)
         {
-            return await Client.Post<AccessToken>(_apiEndpoints.Login.Path, user);
+            return await Client.Post<AccessToken>("login" , user);
         }
 
         public async Task<(AccessToken, AccountingApiResult)> Register(User user)
         {
-            return await Client.Post<AccessToken>(_apiEndpoints.Register.Path, user);
+            return await Client.Post<AccessToken>("register", user);
         }
     }
 }

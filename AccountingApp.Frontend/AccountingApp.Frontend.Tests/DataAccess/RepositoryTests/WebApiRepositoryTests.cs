@@ -13,26 +13,6 @@ namespace AccountingApp.Frontend.Tests.DataAccess.RepositoryTests
         protected Mock<WebApiClient<T>> ClientMock { get; }
         protected WebApiClient<T> Client => ClientMock.Object;
 
-        protected static AccountingApiEndpoints ApiEndpoints { get; } =
-            new AccountingApiEndpoints
-            {
-                Login = new ApiEndpoint { Path = string.Empty },
-                Register = new ApiEndpoint { Path = string.Empty },
-                BudgetType = new ApiEndpoint { Path = string.Empty },
-                BudgetChange = new BudgetChangeEndpoint
-                {
-                    Path = string.Empty,
-                    PathForDate = string.Empty,
-                    PathBetweenDates = string.Empty,
-                    Arguments = new BudgetChangeApiArguments
-                    {
-                        FromDate = string.Empty,
-                        ToDate = string.Empty,
-                        SingleDate = string.Empty,
-                    },
-                },
-            };
-
         public WebApiRepositoryTests()
         {
             ClientMock = new Mock<WebApiClient<T>>(MockBehavior.Strict, new HttpClient() 

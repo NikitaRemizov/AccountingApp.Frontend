@@ -11,7 +11,7 @@ namespace AccountingApp.Frontend.Tests.DataAccess.RepositoryTests
 
         public BudgetChangesTests()
         {
-            Repository = new BudgetChanges(Client, ApiEndpoints);
+            Repository = new BudgetChanges(Client);
         }
 
         [Fact]

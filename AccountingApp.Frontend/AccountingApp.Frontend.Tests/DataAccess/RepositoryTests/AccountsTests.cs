@@ -1,15 +1,9 @@
-﻿using AccountingApp.Frontend.DataAccess.Repositories;
-using AccountingApp.Shared.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xunit;
-using Moq;
-using AccountingApp.Frontend.DataAccess.Models;
-using AccountingApp.Frontend.DataAccess.Repositories.Interfaces;
+﻿using AccountingApp.Frontend.DataAccess.Models;
+using AccountingApp.Frontend.DataAccess.Repositories;
 using AccountingApp.Frontend.DataAccess.Utils;
+using AccountingApp.Shared.Models;
+using Moq;
+using Xunit;
 
 namespace AccountingApp.Frontend.Tests.DataAccess.RepositoryTests
 {
@@ -19,7 +13,7 @@ namespace AccountingApp.Frontend.Tests.DataAccess.RepositoryTests
 
         public AccountsTests()
         {
-            Repository = new Accounts(Client, ApiEndpoints);
+            Repository = new Accounts(Client);
         }
 
         [Fact]
