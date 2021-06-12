@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\AccountingApp\AccountingApp\AccountingApp.Shared\AccountingApp.Shared.csproj" />
+    <ProjectReference Include="..\..\AccountingApp.Shared\AccountingApp.Shared\AccountingApp.Shared\AccountingApp.Shared.csproj" />
   </ItemGroup>
 
 </Project>

@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AccountingApp.Frontend.Data
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AccountingApp.Frontend.Tests", "AccountingApp.Frontend.Tests\AccountingApp.Frontend.Tests.csproj", "{104BEE00-9DAB-4EC4-8060-2A1E8F015B46}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AccountingApp.Shared", "..\..\AccountingApp\AccountingApp\AccountingApp.Shared\AccountingApp.Shared.csproj", "{54AAC6EA-0F72-42BE-8900-39683F910989}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AccountingApp.Shared", "..\AccountingApp.Shared\AccountingApp.Shared\AccountingApp.Shared\AccountingApp.Shared.csproj", "{F16523EE-C2B9-4365-9A3C-AA8A9720132F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,10 @@ Global
 		{104BEE00-9DAB-4EC4-8060-2A1E8F015B46}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{104BEE00-9DAB-4EC4-8060-2A1E8F015B46}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{104BEE00-9DAB-4EC4-8060-2A1E8F015B46}.Release|Any CPU.Build.0 = Release|Any CPU
-		{54AAC6EA-0F72-42BE-8900-39683F910989}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{54AAC6EA-0F72-42BE-8900-39683F910989}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{54AAC6EA-0F72-42BE-8900-39683F910989}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{54AAC6EA-0F72-42BE-8900-39683F910989}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F16523EE-C2B9-4365-9A3C-AA8A9720132F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F16523EE-C2B9-4365-9A3C-AA8A9720132F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F16523EE-C2B9-4365-9A3C-AA8A9720132F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F16523EE-C2B9-4365-9A3C-AA8A9720132F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
