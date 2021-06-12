@@ -1,9 +1,6 @@
-﻿using AccountingApp.Frontend.DataAccess.Repositories.Interfaces;
-using AccountingApp.Frontend.DataAccess.Utils;
-using AccountingApp.Frontend.Models;
-using AccountingApp.Frontend.Services.Interfaces;
+﻿using AccountingApp.Frontend.Services.Interfaces;
+using AccountingApp.Frontend.Services.Models;
 using AccountingApp.Frontend.Utils.Extensions;
-using AccountingApp.Shared.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Components;
 using System;
@@ -12,14 +9,12 @@ using System.Threading.Tasks;
 
 namespace AccountingApp.Frontend.Shared
 {
-    public abstract class BudgetModelList<TModel, TView> : DataAccessComponent where TModel : BudgetModel where TView : BudgetViewModel, new()
+    public abstract class BudgetModelList<TModel> : DataAccessComponent where TModel : BudgetModel 
     {
-        protected List<TView> ViewModelItems { get; set; } = new List<TView>();
+        protected List<TModel> ModelItems { get; set; } = new List<TModel>();
 
-        protected abstract IRepository<TModel> Repository { get; }
+        protected abstract IBudgetModelsService<TModel> Service { get; }
 
-        [Inject]
-        protected IAccountService Account { get; set; }
         [Inject]
         protected IMapper Mapper { get; set; }
 
@@ -27,7 +22,7 @@ namespace AccountingApp.Frontend.Shared
 
         protected override async Task OnInitializedAsync()
         {
-            if (!(await Account.TrySetAccessToken(Repository)))
+            if (!(await Account.TrySetAccessToken(Service)))
             {
                 NavigationManager.NavigateToAuthentification();
                 return;
@@ -36,7 +31,7 @@ namespace AccountingApp.Frontend.Shared
             await InitializeItemsList();
         }
 
-        protected async Task Delete(TView viewModel)
+        protected async Task Delete(TModel viewModel)
         {
             var id = viewModel?.Id;
             if (id is null || id == Guid.Empty)
@@ -44,18 +39,18 @@ namespace AccountingApp.Frontend.Shared
                 return;
             }
 
-            var result = await Repository.Delete((Guid)id);
+            var result = await Service.Delete((Guid)id);
             await ProcessResult(result);
-            if (result != AccountingApiResult.Ok)
+            if (result != ServiceResult.Ok)
             {
                 return;
             }
 
-            ViewModelItems.Remove(viewModel);
+            ModelItems.Remove(viewModel);
             StateHasChanged();
         }
 
-        protected async Task Update(TView viewModel)
+        protected async Task Update(TModel viewModel)
         {
             var id = viewModel?.Id;
             if (id is null || id == Guid.Empty)
@@ -63,7 +58,7 @@ namespace AccountingApp.Frontend.Shared
                 return;
             }
             var modelToUpdate = Mapper.Map<TModel>(viewModel);
-            var result = await Repository.Update(modelToUpdate);
+            var result = await Service.Update(modelToUpdate);
             await ProcessResult(result);
         }
     }

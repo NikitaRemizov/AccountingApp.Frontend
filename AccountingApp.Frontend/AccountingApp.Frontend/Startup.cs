@@ -1,10 +1,6 @@
-using AccountingApp.Frontend.DataAccess.Infrastructure;
-using AccountingApp.Frontend.DataAccess.Repositories;
-using AccountingApp.Frontend.DataAccess.Repositories.Interfaces;
-using AccountingApp.Frontend.Services;
-using AccountingApp.Frontend.Services.Interfaces;
+using AccountingApp.Frontend.Utils.DependencyInjection;
 using AccountingApp.Frontend.Utils.Mapping;
-using AccountingApp.Shared.Models;
+using Autofac;
 using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
@@ -19,41 +15,41 @@ namespace AccountingApp.Frontend
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; }
+        public MapperConfiguration MapperConfiguration { get; }
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            MapperConfiguration = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<ServiceMappingProfile>();
+            });
         }
-
-        public IConfiguration Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<IAccounts, Accounts>();
-            services.AddScoped<IBudgetTypes, BudgetTypes>();
-            services.AddScoped<IBudgetChanges, BudgetChanges>();
-            services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<ProtectedBrowserStorage, ProtectedLocalStorage>();
-            services.AddScoped<WebApiClient<User>>();
-            services.AddScoped<WebApiClient<BudgetType>>();
-            services.AddScoped<WebApiClient<BudgetChange>>();
-
-            var baseUrl = new Uri(Configuration.GetValue<string>("ApiBaseUrl"));
-            services.AddHttpClient<WebApiClient<User>>(
-                client => client.BaseAddress = baseUrl);
-            services.AddHttpClient<WebApiClient<BudgetType>>(
-                client => client.BaseAddress = baseUrl);
-            services.AddHttpClient<WebApiClient<BudgetChange>>(
-                client => client.BaseAddress = baseUrl);
-
-            var mapperConfiguration = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile<BudgetModelsMappingProfile>();
-            });
-            services.AddTransient(provider => mapperConfiguration.CreateMapper());
-
+            services.AddHttpClient();
             services.AddMudServices();
             services.AddRazorPages();
             services.AddServerSideBlazor();
+        }
+
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            var baseUrl = new Uri(Configuration.GetValue<string>("ApiBaseUrl"));
+            builder.RegisterModule(new ServicesModule(baseUrl));
+
+            builder
+                .Register(provider => MapperConfiguration.CreateMapper())
+                .As<IMapper>()
+                .InstancePerDependency();
+
+            builder
+                .RegisterType<ProtectedLocalStorage>()
+                .As<ProtectedBrowserStorage>()
+                .InstancePerLifetimeScope();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace AccountingApp.Frontend.DataAccess.Repositories.Interfaces
 {
-    public interface IAccounts
+    public interface IAccountRepository
     {
         Task<(AccessToken, AccountingApiResult)> Register(User user);
         Task<(AccessToken, AccountingApiResult)> Login(User user);

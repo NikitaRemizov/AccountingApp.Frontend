@@ -1,15 +1,16 @@
 ﻿using AccountingApp.Frontend.DataAccess.Infrastructure;
 using AccountingApp.Frontend.DataAccess.Models;
+using System.Net.Http;
 
 namespace AccountingApp.Frontend.DataAccess.Repositories
 {
-    public abstract class WebApiRepository<T> where T : class
+    public abstract class Repository<T> where T : class
     {
         private protected WebApiClient<T> Client { get; private set; }
 
-        protected WebApiRepository(WebApiClient<T> client)
+        protected Repository(HttpClient httpClient)
         {
-            Client = client;
+            Client = new WebApiClient<T>(httpClient);
         }
 
         public void SetAccessToken(AccessToken token)

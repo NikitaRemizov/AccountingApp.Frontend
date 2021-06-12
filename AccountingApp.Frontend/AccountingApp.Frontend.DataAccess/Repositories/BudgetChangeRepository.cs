@@ -1,16 +1,16 @@
-﻿using AccountingApp.Frontend.DataAccess.Infrastructure;
-using AccountingApp.Frontend.DataAccess.Repositories.Interfaces;
+﻿using AccountingApp.Frontend.DataAccess.Repositories.Interfaces;
 using AccountingApp.Frontend.DataAccess.Utils;
 using AccountingApp.Shared.Models;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace AccountingApp.Frontend.DataAccess.Repositories
 {
-    public class BudgetChanges : BudgetModels<BudgetChange>, IBudgetChanges
+    public class BudgetChangeRepository : BudgetModelRepository<BudgetChange>, IBudgetChangeRepository
     {
-        public BudgetChanges(WebApiClient<BudgetChange> client)
+        public BudgetChangeRepository(HttpClient client)
             : base(client, "budget/change")
         {
         }

@@ -1,20 +1,19 @@
-﻿using AccountingApp.Frontend.Models;
-using AccountingApp.Shared.Models;
+﻿using AccountingApp.Frontend.Services.Models;
 using System.Threading.Tasks;
 
 namespace AccountingApp.Frontend.Shared.Forms.Abstract
 {
-    public abstract class CreateBudgetModelBase<TModel, TView> : BudgetModelComponentBase<TModel, TView> where TModel : BudgetModel where TView : BudgetViewModel, new()
+    public abstract class CreateBudgetModelBase<TModel> : BudgetModelComponentBase<TModel> where TModel : BudgetModel, new()
     {
-        protected TView ViewModel { get; set; } = new TView();
+        protected TModel Model { get; set; } = new TModel();
 
         protected override async Task HandleUserSubmit()
         {
-            var modelToCreate = Mapper.Map<TModel>(ViewModel);
-            var (_, result) = await Repository.Create(modelToCreate);
+            var modelToCreate = Mapper.Map<TModel>(Model);
+            var (_, result) = await Service.Create(modelToCreate);
             await ProcessResult(result, "The record is not created");
 
-            ViewModel = new TView();
+            Model = new TModel();
             MudDialog.Close();
         }
     }

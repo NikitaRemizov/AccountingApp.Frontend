@@ -2,9 +2,7 @@
 
 @inherits DataAccessComponent
 
-@inject IBudgetChanges BudgetChangeRepository
-@inject IAccountService Account
-@inject IMapper Mapper
+@inject IBudgetReportsService Service
 
 @page "/report"
 
@@ -18,7 +16,7 @@
     </MudButton>
 </MudContainer>
 
-@if (!MustShowIncomeReport && !MustShowExpenseReport)
+@if (!ShowReport)
 {
     <MudContainer Class="d-flex justify-center" MaxWidth="@MaxContentWidth">
         <MudText Class="my-3" Typo="Typo.h5">
@@ -49,7 +47,7 @@ else
             <MudItem Class="align-center" xs="12" md="7">
                 <MudContainer MaxWidth="MaxWidth.Large">
                     <MudPaper Elevation="@ElevationLevel">
-                        <MudTable Items="@ReportShown" Breakpoint="Breakpoint.None" Style="align-items:baseline">
+                        <MudTable Items="@Reports" Breakpoint="Breakpoint.None" Style="align-items:baseline">
                             <ColGroup>
                                 <col style="width: 50%" />
                                 <col style="width: 50%" />
@@ -80,40 +78,22 @@ else
     private const int ElevationLevel = 1;
     private const string Untyped = "UNCATEGORIZED";
 
-    private bool MustShowIncomeReport 
-        => IncomeReport is not null && IncomeReport.Any() && ReportType == ReportType.Income;
-    private bool MustShowExpenseReport 
-        => ExpenseReport is not null && ExpenseReport.Any() && ReportType == ReportType.Expense;
+    private bool ShowReport
+        => Reports is not null && Reports.Any();
 
-    private IEnumerable<BudgetReport> IncomeReport { get; set; }
-    private IEnumerable<BudgetReport> ExpenseReport { get; set; }
-    private IEnumerable<BudgetReport> ReportShown => ReportType switch
-    {
-        ReportType.Expense => ExpenseReport,
-        _ => IncomeReport
-    };
+    private IEnumerable<BudgetReport> Reports { get; set; }
 
-    private double[] ChartData => ReportShown?.Select(r => r.AmountInDollars).ToArray();
-    private string[] ChartLabels => ReportShown?.Select(r => r.BudgetTypeName).ToArray();
-    private string TotalText => ReportShown?.Sum(r => r.AmountInDollars).ToString("F");
+    private double[] ChartData => Reports?.Select(r => r.AmountInDollars).ToArray();
+    private string[] ChartLabels => Reports?.Select(r => r.BudgetTypeName).ToArray();
+    private string TotalText => Reports?.Sum(r => r.AmountInDollars).ToString("F");
     private int SelectedChartItemIndex = -1;
 
-    private ReportTimeSpan ReportTimeSpan { get; set; } = ReportTimeSpan.Day;
-    private ReportType ReportType { get; set; } = ReportType.Income;
-
-    private async Task<(IEnumerable<BudgetChange>, AccountingApiResult)> GetBudgetChanges() => ReportTimeSpan switch
-    {
-        ReportTimeSpan.Day =>
-            await BudgetChangeRepository.GetForDate(DateTime.Today),
-        ReportTimeSpan.Month =>
-            await BudgetChangeRepository.GetBetweenDates(DateTime.Today.AddMonths(-1), DateTime.Today),
-        _ =>
-            (null, AccountingApiResult.Error)
-    };
+    private BudgetReportTimeSpan ReportTimeSpan { get; set; } = BudgetReportTimeSpan.Day;
+    private BudgetReportType ReportType { get; set; } = BudgetReportType.Income;
 
     protected override async Task OnInitializedAsync()
     {
-        if (!(await Account.TrySetAccessToken(BudgetChangeRepository)))
+        if (!(await Account.TrySetAccessToken(Service)))
         {
             NavigationManager.NavigateToAuthentification();
             return;
@@ -124,59 +104,30 @@ else
 
     private async Task InitializeViewData()
     {
-        var (budgetChanges, result) = await GetBudgetChanges();
+        var (reports, result) = await Service.GetReport(ReportType, ReportTimeSpan);
         await ProcessResult(result);
-        if (result != AccountingApiResult.Ok)
-        {
-            return;
-        }
-        ChangeViewData(budgetChanges);
-    }
-
-    private void ChangeViewData(IEnumerable<BudgetChange> budgetChanges)
-    {
-        if (budgetChanges is null)
-        {
-            return;
-        }
-        var reportRecords = budgetChanges
-            .GroupBy(b => b.BudgetTypeId)
-            .Select(group => new BudgetReport
-            {
-                BudgetTypeName = group.First().BudgetTypeName ?? Untyped,
-                Amount = group.Sum(g => g.Amount)
-            });
-
-        IncomeReport = reportRecords
-            .Where(r => r.Amount > 0);
-        ExpenseReport = reportRecords
-            .Where(r => r.Amount < 0)
-            .Select(r =>
-            {
-                r.Amount *= -1;
-                return r;
-            });
+        Reports = reports;
     }
 
     private async Task SwitchReportTimeSpan()
     {
         ReportTimeSpan = ReportTimeSpan switch
         {
-            ReportTimeSpan.Day => ReportTimeSpan.Month,
-            ReportTimeSpan.Month => ReportTimeSpan.Day,
-            _ => ReportTimeSpan.Day
+            BudgetReportTimeSpan.Day => BudgetReportTimeSpan.Month,
+            BudgetReportTimeSpan.Month => BudgetReportTimeSpan.Day,
+            _ => BudgetReportTimeSpan.Day
         };
         await InitializeViewData();
     }
 
-    private void SwitchReportType()
+    private async Task SwitchReportType()
     {
         ReportType = ReportType switch
         {
-            ReportType.Income => ReportType.Expense,
-            ReportType.Expense => ReportType.Income,
-            _ => ReportType.Income
+            BudgetReportType.Income => BudgetReportType.Expense,
+            BudgetReportType.Expense => BudgetReportType.Income,
+            _ => BudgetReportType.Income
         };
-        StateHasChanged();
+        await InitializeViewData();
     }
 }

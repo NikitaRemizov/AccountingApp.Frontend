@@ -2,7 +2,8 @@
 using AccountingApp.Frontend.DataAccess.Repositories.Interfaces;
 using AccountingApp.Frontend.DataAccess.Utils;
 using AccountingApp.Frontend.Services.Interfaces;
-using AccountingApp.Shared.Models;
+using AccountingApp.Frontend.Services.Models;
+using AutoMapper;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using System;
 using System.Threading.Tasks;
@@ -25,25 +26,27 @@ namespace AccountingApp.Frontend.Services
             }
         }
 
-        private bool _isAuthentificated;
 
-        private IAccounts _accounts;
-        private ProtectedBrowserStorage _browserStorage;
+        private readonly IMapper mapper;
+        private bool _isAuthentificated;
+        private readonly IAccountRepository _accounts;
+        private readonly ProtectedBrowserStorage _browserStorage;
         private AccessToken _accessToken; 
 
-        public AccountService(IAccounts accounts, ProtectedBrowserStorage browserStorage)
+        public AccountService(IMapper mapper, IAccountRepository accounts, ProtectedBrowserStorage browserStorage)
         {
+            this.mapper = mapper;
             _accounts = accounts;
             _browserStorage = browserStorage;
         }
 
-        public async Task<AccessToken> GetToken()
+        public async Task<string> GetToken()
         {
             if (_accessToken is null)
             {
                 await InitializeToken();
             }
-            return _accessToken;
+            return _accessToken.Value;
         }
 
         public async Task InitializeToken()
@@ -60,11 +63,11 @@ namespace AccountingApp.Frontend.Services
 
         public async Task Login(User user)
         {
-            var (token, result) = await _accounts.Login(user);
+            var userToLogin = mapper.Map<Shared.Models.User>(user);
+            var (token, result) = await _accounts.Login(userToLogin);
             if (result != AccountingApiResult.Ok)
             {
                 await Logout();
-                IsAuthentificated = false;
                 return;
             }
             await _browserStorage.SetAsync(AccessTokenName, token);
@@ -73,11 +76,11 @@ namespace AccountingApp.Frontend.Services
 
         public async Task Register(User user)
         {
-            var (token, result) = await _accounts.Register(user);
+            var userToLogin = mapper.Map<Shared.Models.User>(user);
+            var (token, result) = await _accounts.Register(userToLogin);
             if (result != AccountingApiResult.Ok)
             {
                 await Logout();
-                IsAuthentificated = false;
                 return;
             }
             await _browserStorage.SetAsync(AccessTokenName, token);

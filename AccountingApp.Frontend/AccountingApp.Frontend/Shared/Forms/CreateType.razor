@@ -1,12 +1,12 @@
 ﻿@using AccountingApp.Frontend.Shared.Forms.Fields;
 @using AccountingApp.Frontend.Shared.Forms.Abstract;
 
-@inherits CreateBudgetModelBase<BudgetType, BudgetTypeViewModel>
+@inherits CreateBudgetModelBase<BudgetType>
 
 <FormDialog Header="Create new category">
     <Form>
-        <MudForm Model="@ViewModel" @bind-IsValid="@IsValidationSuccessful">
-            <TypeTextField @bind-BudgetType="@ViewModel"></TypeTextField>
+        <MudForm Model="@Model" @bind-IsValid="@IsValidationSuccessful">
+            <TypeTextField @bind-BudgetType="@Model"></TypeTextField>
         </MudForm>
     </Form>
     <Buttons>

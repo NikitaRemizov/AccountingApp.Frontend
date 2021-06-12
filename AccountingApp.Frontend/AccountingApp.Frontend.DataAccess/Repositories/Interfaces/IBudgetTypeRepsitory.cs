@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace AccountingApp.Frontend.DataAccess.Repositories.Interfaces
 {
-    public interface IBudgetTypes : IRepository<BudgetType>
+    public interface IBudgetTypeRepository : IRepository<BudgetType>
     {
         Task<(IEnumerable<BudgetType>, AccountingApiResult)> GetAll();
     }

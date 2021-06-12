@@ -1,11 +1,11 @@
 ﻿@page "/budget/type"
 
-@inherits BudgetModelList<BudgetType, BudgetTypeViewModel>
+@inherits BudgetModelList<BudgetType>
 
-@inject IBudgetTypes BudgetTypeRepository
+@inject IBudgetTypesService BudgetTypesService
 
 <MudContainer MaxWidth="MaxWidth.Medium">
-    <MudTable Items="@ViewModelItems" Hover="true" Breakpoint="Breakpoint.None" Elevation="1" Height="80vh">
+    <MudTable Items="@ModelItems" Hover="true" Breakpoint="Breakpoint.None" Elevation="1" Height="80vh">
         <ColGroup>
             <col />
             <col class="button-column" />
@@ -28,17 +28,17 @@
 
 @code {
 
-    protected override IBudgetTypes Repository => BudgetTypeRepository;
+    protected override IBudgetTypesService Service => BudgetTypesService;
 
     protected override async Task InitializeItemsList()
     {
-        var (budgetTypes, result) = await BudgetTypeRepository.GetAll();
+        var (budgetTypes, result) = await Service.GetAll();
         await ProcessResult(result);
-        if (result != AccountingApiResult.Ok)
+        if (result != ServiceResult.Ok)
         {
             return;
         }
-        ViewModelItems = Mapper.Map<List<BudgetTypeViewModel>>(budgetTypes);
+        ModelItems = budgetTypes.ToList();
     }
 
     protected async Task OpenCreateDialog()
@@ -47,6 +47,6 @@
         {
             await InitializeItemsList();
             StateHasChanged();
-        }, BudgetTypeRepository);
+        }, BudgetTypesService);
     }
 }

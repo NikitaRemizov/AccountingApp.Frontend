@@ -14,11 +14,11 @@
 @code {
 
     [Parameter]
-    public BudgetChangeViewModel BudgetChange { get; set; }
+    public BudgetChange BudgetChange { get; set; }
 
     [Parameter]
-    public EventCallback<BudgetChangeViewModel> BudgetChangeChanged { get; set; }
+    public EventCallback<BudgetChange> BudgetChangeChanged { get; set; }
 
     [Parameter]
-    public IEnumerable<BudgetTypeViewModel> BudgetTypes { get; set; }
+    public IEnumerable<BudgetType> BudgetTypes { get; set; }
 }

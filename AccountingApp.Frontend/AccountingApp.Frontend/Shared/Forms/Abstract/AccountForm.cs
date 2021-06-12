@@ -1,5 +1,5 @@
 ﻿using AccountingApp.Frontend.Services.Interfaces;
-using AccountingApp.Shared.Models;
+using AccountingApp.Frontend.Services.Models;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using System.Threading.Tasks;

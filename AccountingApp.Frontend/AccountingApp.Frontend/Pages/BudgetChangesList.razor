@@ -1,10 +1,9 @@
 ﻿@page "/budget/change"
 
-@inherits BudgetModelList<BudgetChange, BudgetChangeViewModel>
+@inherits BudgetModelList<BudgetChange>
 
-@inject IBudgetChanges BudgetChangeRepository
-@inject IBudgetTypes BudgetTypeRepository
-
+@inject IBudgetChangesService BudgetChangesService
+@inject IBudgetTypesService BudgetTypesService
 
 <style>
     .input-container {
@@ -24,7 +23,7 @@
 </MudContainer>
 
 <MudContainer MaxWidth="ContentMaxWidth" >
-    <MudTable Items="@ViewModelItems" Hover="true" Breakpoint="Breakpoint.Xs" Elevation="1"
+    <MudTable Items="@ModelItems" Hover="true" Breakpoint="Breakpoint.Xs" Elevation="1"
               Height="66vh" RowsPerPage="9" FixedHeader="true">
         <ColGroup>
             <col style="min-width:17em"/>
@@ -61,7 +60,7 @@
 
 @code {      
 
-    protected override IBudgetChanges Repository => BudgetChangeRepository;
+    protected override IBudgetChangesService Service => BudgetChangesService;
 
     private const MaxWidth ContentMaxWidth = MaxWidth.Large;
 
@@ -71,13 +70,12 @@
     private DateTime DateFrom => PickerDateFrom ?? DateTime.Today;
     private DateTime DateTo => PickerDateTo ?? DateTime.Today;
 
-    private BudgetChangeViewModel SelectedBudgetChange { get; set; }
-    private IEnumerable<BudgetTypeViewModel> BudgetTypes { get; set; }
+    private IEnumerable<BudgetType> BudgetTypes { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        if (!(await Account.TrySetAccessToken(BudgetChangeRepository)) ||
-            !(await Account.TrySetAccessToken(BudgetTypeRepository)))
+        if (!(await Account.TrySetAccessToken(BudgetChangesService)) ||
+            !(await Account.TrySetAccessToken(BudgetTypesService)))
         {
             NavigationManager.NavigateToAuthentification();
             return;
@@ -88,16 +86,16 @@
 
     protected override async Task InitializeItemsList()
     {
-        var (budgetChanges, result) = await Repository.GetBetweenDates(DateFrom, DateTo);
+        var (budgetChanges, result) = await Service.GetBetweenDates(DateFrom, DateTo);
         await ProcessResult(result);
-        if (result != AccountingApiResult.Ok)
+        if (result != ServiceResult.Ok)
         {
             return;
         }
-        ViewModelItems = Mapper.Map<List<BudgetChangeViewModel>>(budgetChanges);
+        ModelItems = budgetChanges.ToList();
     }
 
-    private async Task OpenEditDialog(BudgetChangeViewModel budgetChange)
+    private async Task OpenEditDialog(BudgetChange budgetChange)
     {
         await DialogService.Show<EditBudgetChange>(
             async () =>
@@ -105,8 +103,8 @@
                 await InitializeItemsList();
                 StateHasChanged();
             },
-            BudgetTypeRepository,
-            BudgetChangeRepository,
+            BudgetTypesService,
+            BudgetChangesService,
             budgetChange
         );
     }
@@ -119,8 +117,8 @@
                 await InitializeItemsList();
                 StateHasChanged();
             },
-            BudgetTypeRepository,
-            BudgetChangeRepository
+            BudgetTypesService,
+            BudgetChangesService
         );
     }
 
@@ -138,12 +136,12 @@
 
     private async Task InitializeBudgetTypesList()
     {
-        var (budgetTypes, result) = await BudgetTypeRepository.GetAll();
+        var (budgetTypes, result) = await BudgetTypesService.GetAll();
         await ProcessResult(result);
-        if (result != AccountingApiResult.Ok)
+        if (result != ServiceResult.Ok)
         {
             return;
         }
-        BudgetTypes = Mapper.Map<IEnumerable<BudgetTypeViewModel>>(budgetTypes);
+        BudgetTypes = budgetTypes;
     }
 }

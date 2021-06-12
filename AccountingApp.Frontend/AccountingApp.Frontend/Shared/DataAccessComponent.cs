@@ -1,4 +1,5 @@
-﻿using AccountingApp.Frontend.DataAccess.Utils;
+﻿using AccountingApp.Frontend.Services.Interfaces;
+using AccountingApp.Frontend.Services.Models;
 using AccountingApp.Frontend.Utils.Extensions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
@@ -14,20 +15,24 @@ namespace AccountingApp.Frontend.Shared
         [Inject]
         protected IDialogService DialogService { get; set; }
 
-        protected async Task ProcessResult(AccountingApiResult result, string errorMessage)
+        [Inject]
+        protected IAccountService Account { get; set; }
+
+        protected async Task ProcessResult(ServiceResult result, string errorMessage)
         {
-            if (result == AccountingApiResult.Unauthorized)
+            if (result == ServiceResult.Unauthorized)
             {
                 NavigationManager.NavigateToAuthentification();
+                await Account.Logout();
             }
-            if (result != AccountingApiResult.Ok)
+            if (result != ServiceResult.Ok)
             {
                 await DialogService.ShowMessageBox(
                     "Error", errorMessage);
             }
         }
 
-        protected async Task ProcessResult(AccountingApiResult result)
+        protected async Task ProcessResult(ServiceResult result)
         {
             await ProcessResult(result, result.ToPageMessage());
         }

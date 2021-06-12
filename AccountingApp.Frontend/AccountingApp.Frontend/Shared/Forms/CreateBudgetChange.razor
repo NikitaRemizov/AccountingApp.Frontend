@@ -1,14 +1,14 @@
 ﻿@using AccountingApp.Frontend.Shared.Forms.Fields;
 @using AccountingApp.Frontend.Shared.Forms.Abstract;
 
-@inherits CreateBudgetModelBase<BudgetChange, BudgetChangeViewModel>
+@inherits CreateBudgetModelBase<BudgetChange>
 
 <FormDialog Header="Add new income/outcome">
     <Form>
-        <MudForm Model="@ViewModel" @bind-IsValid="@IsValidationSuccessful">
-            <TypeSelectField @bind-BudgetChange="ViewModel" BudgetTypes="BudgetTypes" />
-            <AmountField @bind-BudgetChange="@ViewModel" />
-            <DatePicker @bind-Date="@ViewModel.Date"/>
+        <MudForm Model="@Model" @bind-IsValid="@IsValidationSuccessful">
+            <TypeSelectField @bind-BudgetChange="Model" BudgetTypes="BudgetTypes" />
+            <AmountField @bind-BudgetChange="@Model" />
+            <DatePicker @bind-Date="@Model.Date"/>
         </MudForm>
     </Form>
     <Buttons>
@@ -21,26 +21,26 @@
 
 @code {
 
-    public IEnumerable<BudgetTypeViewModel> BudgetTypes { get; set; }
+    public IEnumerable<BudgetType> BudgetTypes { get; set; }
 
     [Parameter]
-    public BudgetTypes BudgetTypeRepository
+    public IBudgetTypesService BudgetTypesService
     {
-        get { return _budgetTypeRepository ?? throw new ArgumentNullException(); }
-        set { _budgetTypeRepository = value; }
+        get { return _budgetTypeService ?? throw new ArgumentNullException(); }
+        set { _budgetTypeService = value; }
     }
 
-    private BudgetTypes _budgetTypeRepository;
+    private IBudgetTypesService _budgetTypeService;
 
     protected override async Task OnInitializedAsync()
     {
-        ViewModel.Date = DateTime.Today;
-        BudgetTypes = Mapper.Map<IEnumerable<BudgetTypeViewModel>>(await GetTypes());
+        Model.Date = DateTime.Today;
+        BudgetTypes = await GetTypes();
     }
 
     private async Task<IEnumerable<BudgetType>> GetTypes()
     {
-        var (budgetTypes, result) = await BudgetTypeRepository.GetAll();
+        var (budgetTypes, result) = await BudgetTypesService.GetAll();
         await ProcessResult(result, "The category information is not retreived");
         return budgetTypes;
     }

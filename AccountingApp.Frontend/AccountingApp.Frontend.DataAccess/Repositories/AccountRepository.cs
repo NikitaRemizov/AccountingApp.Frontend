@@ -1,15 +1,15 @@
-﻿using AccountingApp.Frontend.DataAccess.Infrastructure;
-using AccountingApp.Frontend.DataAccess.Models;
+﻿using AccountingApp.Frontend.DataAccess.Models;
 using AccountingApp.Frontend.DataAccess.Repositories.Interfaces;
 using AccountingApp.Frontend.DataAccess.Utils;
 using AccountingApp.Shared.Models;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace AccountingApp.Frontend.DataAccess.Repositories
 {
-    public class Accounts : WebApiRepository<User>, IAccounts
+    public class AccountRepository : Repository<User>, IAccountRepository
     {
-        public Accounts(WebApiClient<User> client)
+        public AccountRepository(HttpClient client)
             : base(client)
         {
         }

@@ -1,5 +1,4 @@
-﻿using AccountingApp.Frontend.DataAccess.Repositories.Interfaces;
-using AccountingApp.Shared.Models;
+﻿using AccountingApp.Frontend.Services.Interfaces;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using System;
@@ -11,9 +10,9 @@ namespace AccountingApp.Frontend.Utils.Extensions
     {
         public static async Task Show<T>(this IDialogService dialogService, 
                                          Func<Task> afterSubmitAction, 
-                                         IBudgetTypes budgetTypes = null, 
-                                         IBudgetChanges budgetChanges = null,
-                                         object viewModel = null) where T : ComponentBase
+                                         IBudgetTypesService budgetTypes = null, 
+                                         IBudgetChangesService budgetChanges = null,
+                                         object model = null) where T : ComponentBase
         {
             if (dialogService is null)
             {
@@ -26,19 +25,19 @@ namespace AccountingApp.Frontend.Utils.Extensions
             switch ((budgetChanges, budgetTypes))
             {
                 case (null, not null):
-                    parameters.Add("Repository", budgetTypes);
+                    parameters.Add("Service", budgetTypes);
                     break;
                 case (not null, not null):
-                    parameters.Add("Repository", budgetChanges);
-                    parameters.Add("BudgetTypeRepository", budgetTypes);
+                    parameters.Add("Service", budgetChanges);
+                    parameters.Add("BudgetTypesService", budgetTypes);
                     break;
                 default:
                     break;
             }
 
-            if (viewModel is not null)
+            if (model is not null)
             {
-                parameters.Add("ViewModel", viewModel);
+                parameters.Add("Model", model);
             }
 
             var dialogResult = await dialogService.Show<T>(null, parameters).Result;

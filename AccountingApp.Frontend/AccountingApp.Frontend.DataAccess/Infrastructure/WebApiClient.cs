@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AccountingApp.Frontend.DataAccess.Infrastructure
 {
-    public class WebApiClient<TIn> where TIn : class
+    internal class WebApiClient<TIn> where TIn : class
     {
         private HttpClient Client { get; set; }
 

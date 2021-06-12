@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\AccountingApp.Shared\AccountingApp.Shared\AccountingApp.Shared\AccountingApp.Shared.csproj" />
+    <ProjectReference Include="..\AccountingApp.Frontend.DataAccess\AccountingApp.Frontend.DataAccess.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="DTO\" />
+    <Folder Include="Utils\" />
+    <Folder Include="Services\Interfaces\" />
+  </ItemGroup>
+
+</Project>

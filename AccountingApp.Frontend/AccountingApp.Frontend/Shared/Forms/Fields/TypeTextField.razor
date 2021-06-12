@@ -9,10 +9,10 @@
     private const int MaxLength = 15;
 
     [Parameter]
-    public BudgetTypeViewModel BudgetType { get; set; }
+    public BudgetType BudgetType { get; set; }
 
     [Parameter]
-    public EventCallback<BudgetTypeViewModel> BudgetTypeChanged { get; set; }
+    public EventCallback<BudgetType> BudgetTypeChanged { get; set; }
 
     [Parameter]
     public string Class { get; set; }

@@ -1,17 +1,17 @@
-﻿using AccountingApp.Frontend.DataAccess.Infrastructure;
-using AccountingApp.Frontend.DataAccess.Repositories.Interfaces;
+﻿using AccountingApp.Frontend.DataAccess.Repositories.Interfaces;
 using AccountingApp.Frontend.DataAccess.Utils;
 using AccountingApp.Shared.Models;
 using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace AccountingApp.Frontend.DataAccess.Repositories
 {
-    public abstract class BudgetModels<T> : WebApiRepository<T>, IRepository<T> where T : BudgetModel
+    public abstract class BudgetModelRepository<T> : Repository<T>, IRepository<T> where T : BudgetModel
     {
         protected readonly string _endpointPath;
 
-        private protected BudgetModels(WebApiClient<T> client, string endpointPath) 
+        private protected BudgetModelRepository(HttpClient client, string endpointPath) 
             : base(client)
         {
             _endpointPath = endpointPath;
