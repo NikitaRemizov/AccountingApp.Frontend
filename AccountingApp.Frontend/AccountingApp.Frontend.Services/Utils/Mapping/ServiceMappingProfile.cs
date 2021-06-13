@@ -36,10 +36,10 @@ namespace AccountingApp.Frontend.Utils.Mapping
             CreateMap<User, Shared.Models.User>()
                 .ReverseMap();
 
-            CreateMap<AccountingApiResult, ServiceResult>()
+            CreateMap<DataAccessResult, ServiceResult>()
                 .ConvertUsingEnumMapping(opt =>
                 {
-                    opt.MapValue(AccountingApiResult.ServerUnreachable, ServiceResult.Error);
+                    opt.MapValue(DataAccessResult.ServerUnreachable, ServiceResult.Error);
                     opt.MapByName();
                 });
         }

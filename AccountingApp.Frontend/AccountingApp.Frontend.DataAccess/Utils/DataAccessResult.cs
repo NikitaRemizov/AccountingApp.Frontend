@@ -1,6 +1,6 @@
 ﻿namespace AccountingApp.Frontend.DataAccess.Utils
 {
-    public enum AccountingApiResult
+    public enum DataAccessResult
     {
         Ok,
         Error,

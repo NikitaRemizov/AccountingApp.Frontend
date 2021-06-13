@@ -15,7 +15,7 @@ namespace AccountingApp.Frontend.DataAccess.Repositories
         {
         }
 
-        public async Task<(IEnumerable<BudgetChange>, AccountingApiResult)> GetBetweenDates(DateTime from, DateTime to)
+        public async Task<(IEnumerable<BudgetChange>, DataAccessResult)> GetBetweenDates(DateTime from, DateTime to)
         {
             var requestUrl = $"{_endpointPath}/betweendates" + 
                 $"/?from={DateToString(from)}&to={DateToString(to)}";
@@ -23,7 +23,7 @@ namespace AccountingApp.Frontend.DataAccess.Repositories
             return await Client.Get<List<BudgetChange>>(requestUrl);
         }
 
-        public async Task<(IEnumerable<BudgetChange>, AccountingApiResult)> GetForDate(DateTime date)
+        public async Task<(IEnumerable<BudgetChange>, DataAccessResult)> GetForDate(DateTime date)
         {
             var requestUrl = $"{_endpointPath}/fordate" + 
                 $"/?date={DateToString(date)}";

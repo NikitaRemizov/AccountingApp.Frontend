@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace AccountingApp.Frontend.Services.Interfaces
 {
-    public interface IBudgetModelsService<T> : IService
+    public interface IBudgetModelsService<T> : IBudgetService
     {
         Task<(Guid, ServiceResult)> Create(T model);
         Task<ServiceResult> Delete(Guid id);

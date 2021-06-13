@@ -26,7 +26,6 @@ namespace AccountingApp.Frontend.Services
             }
         }
 
-
         private readonly IMapper mapper;
         private bool _isAuthentificated;
         private readonly IAccountRepository _accounts;
@@ -46,7 +45,7 @@ namespace AccountingApp.Frontend.Services
             {
                 await InitializeToken();
             }
-            return _accessToken.Value;
+            return _accessToken?.Value;
         }
 
         public async Task InitializeToken()
@@ -65,7 +64,7 @@ namespace AccountingApp.Frontend.Services
         {
             var userToLogin = mapper.Map<Shared.Models.User>(user);
             var (token, result) = await _accounts.Login(userToLogin);
-            if (result != AccountingApiResult.Ok)
+            if (result != DataAccessResult.Ok)
             {
                 await Logout();
                 return;
@@ -78,7 +77,7 @@ namespace AccountingApp.Frontend.Services
         {
             var userToLogin = mapper.Map<Shared.Models.User>(user);
             var (token, result) = await _accounts.Register(userToLogin);
-            if (result != AccountingApiResult.Ok)
+            if (result != DataAccessResult.Ok)
             {
                 await Logout();
                 return;

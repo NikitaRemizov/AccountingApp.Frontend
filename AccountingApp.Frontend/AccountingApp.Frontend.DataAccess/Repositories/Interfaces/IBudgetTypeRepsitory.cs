@@ -7,6 +7,6 @@ namespace AccountingApp.Frontend.DataAccess.Repositories.Interfaces
 {
     public interface IBudgetTypeRepository : IRepository<BudgetType>
     {
-        Task<(IEnumerable<BudgetType>, AccountingApiResult)> GetAll();
+        Task<(IEnumerable<BudgetType>, DataAccessResult)> GetAll();
     }
 }

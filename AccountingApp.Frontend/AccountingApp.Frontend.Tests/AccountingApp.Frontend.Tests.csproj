@@ -23,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\AccountingApp.Shared\AccountingApp.Shared\AccountingApp.Shared\AccountingApp.Shared.csproj" />
     <ProjectReference Include="..\AccountingApp.Frontend.DataAccess\AccountingApp.Frontend.DataAccess.csproj" />
+    <ProjectReference Include="..\AccountingApp.Frontend.Services\AccountingApp.Frontend.Services.csproj" />
   </ItemGroup>
 
 </Project>

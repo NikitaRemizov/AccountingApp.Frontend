@@ -8,9 +8,9 @@ namespace AccountingApp.Frontend.DataAccess.Repositories.Interfaces
 {
     public interface IRepository<T> where T : BudgetModel 
     {
-        Task<(Guid, AccountingApiResult)> Create(T model);
-        Task<AccountingApiResult> Delete(Guid id);
-        Task<AccountingApiResult> Update(T model);
+        Task<(Guid, DataAccessResult)> Create(T model);
+        Task<DataAccessResult> Delete(Guid id);
+        Task<DataAccessResult> Update(T model);
         void SetAccessToken(AccessToken token);
     }
 }

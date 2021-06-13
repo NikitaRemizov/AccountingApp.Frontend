@@ -31,31 +31,31 @@ namespace AccountingApp.Frontend.DataAccess.Infrastructure
                 new AuthenticationHeaderValue("Bearer", token.Value);
         }
 
-        public virtual async Task<(T, AccountingApiResult)> Get<T>(string relativeUrl) where T : class, new()
+        public virtual async Task<(T, DataAccessResult)> Get<T>(string relativeUrl) where T : class, new()
         {
             var response = await CallAndCheckConnection(
                 () => Client.GetAsync(relativeUrl));
             var result = Result(response);
-            if (result != AccountingApiResult.Ok)
+            if (result != DataAccessResult.Ok)
             {
                 return (null, result);
             }
             return (await response.Content.ReadAsAsync<T>(), result);
         }
 
-        public virtual async Task<(T, AccountingApiResult)> Post<T>(string relativeUrl, TIn model) where T : class
+        public virtual async Task<(T, DataAccessResult)> Post<T>(string relativeUrl, TIn model) where T : class
         {
             var response = await CallAndCheckConnection(
                 () => Client.PostAsJsonAsync(relativeUrl, model));
             var result = Result(response);
-            if (result != AccountingApiResult.Ok)
+            if (result != DataAccessResult.Ok)
             {
                 return (null, result);
             }
             return (await response.Content.ReadAsAsync<T>(), result);
         }
 
-        public virtual async Task<AccountingApiResult> Delete(string relativeUrl, Guid id)
+        public virtual async Task<DataAccessResult> Delete(string relativeUrl, Guid id)
         {
             var requestUrl = relativeUrl + $"/{id}";
             var response = await CallAndCheckConnection(
@@ -63,7 +63,7 @@ namespace AccountingApp.Frontend.DataAccess.Infrastructure
             return Result(response);
         }
 
-        public virtual async Task<AccountingApiResult> Update(string relativeUrl, TIn model)
+        public virtual async Task<DataAccessResult> Update(string relativeUrl, TIn model)
         {
             var response = await CallAndCheckConnection(
                 () => Client.PutAsJsonAsync(relativeUrl, model));
@@ -82,22 +82,22 @@ namespace AccountingApp.Frontend.DataAccess.Infrastructure
             }
         }
 
-        protected virtual AccountingApiResult Result(HttpResponseMessage response)
+        protected virtual DataAccessResult Result(HttpResponseMessage response)
         {
             if (response is null)
             {
-                return AccountingApiResult.ServerUnreachable;
+                return DataAccessResult.ServerUnreachable;
             }
             var statusCode = response.StatusCode;
             if (statusCode == System.Net.HttpStatusCode.Unauthorized)
             {
-                return AccountingApiResult.Unauthorized;
+                return DataAccessResult.Unauthorized;
             }
             if (!response.IsSuccessStatusCode)
             {
-                return AccountingApiResult.Error;
+                return DataAccessResult.Error;
             }
-            return AccountingApiResult.Ok;
+            return DataAccessResult.Ok;
         }
     }
 }

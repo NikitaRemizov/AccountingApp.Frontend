@@ -5,7 +5,7 @@ namespace AccountingApp.Frontend.Utils.Extensions
 {
     public static class IAccountServiceExtensions
     {
-        public static async Task<bool> TrySetAccessToken(this IAccountService account, IService service)
+        public static async Task<bool> TrySetAccessToken(this IAccountService account, IBudgetService service)
         {
             var accessToken = await account.GetToken();
             if (accessToken is null)

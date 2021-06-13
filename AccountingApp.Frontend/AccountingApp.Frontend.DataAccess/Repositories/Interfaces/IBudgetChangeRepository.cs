@@ -8,7 +8,7 @@ namespace AccountingApp.Frontend.DataAccess.Repositories.Interfaces
 {
     public interface IBudgetChangeRepository : IRepository<BudgetChange>
     {
-        Task<(IEnumerable<BudgetChange>, AccountingApiResult)> GetForDate(DateTime date);
-        Task<(IEnumerable<BudgetChange>, AccountingApiResult)> GetBetweenDates(DateTime from, DateTime to);
+        Task<(IEnumerable<BudgetChange>, DataAccessResult)> GetForDate(DateTime date);
+        Task<(IEnumerable<BudgetChange>, DataAccessResult)> GetBetweenDates(DateTime from, DateTime to);
     }
 }

@@ -17,18 +17,18 @@ namespace AccountingApp.Frontend.DataAccess.Repositories
             _endpointPath = endpointPath;
         }
 
-        public async Task<(Guid, AccountingApiResult)> Create(T model)
+        public async Task<(Guid, DataAccessResult)> Create(T model)
         {
             var (createdItem, result) = await Client.Post<T>(_endpointPath, model);
             return (createdItem?.Id ?? Guid.Empty, result); 
         }
 
-        public async Task<AccountingApiResult> Delete(Guid id)
+        public async Task<DataAccessResult> Delete(Guid id)
         {
             return await Client.Delete(_endpointPath, id);
         }
 
-        public async Task<AccountingApiResult> Update(T model)
+        public async Task<DataAccessResult> Update(T model)
         {
             return await Client.Update(_endpointPath, model);
         }

@@ -30,7 +30,7 @@ namespace AccountingApp.Frontend.Services
         {
             var (budgetChanges, result) = await GetBudgetChanges(timeSpan);
 
-            if (result != AccountingApiResult.Ok)
+            if (result != DataAccessResult.Ok)
             {
                 return (_emptyBudgetReports,
                     Mapper.Map<ServiceResult>(result));
@@ -75,7 +75,7 @@ namespace AccountingApp.Frontend.Services
                 });
         }
 
-        private async Task<(IEnumerable<Shared.Models.BudgetChange>, AccountingApiResult)> GetBudgetChanges(BudgetReportTimeSpan timeSpan)
+        private async Task<(IEnumerable<Shared.Models.BudgetChange>, DataAccessResult)> GetBudgetChanges(BudgetReportTimeSpan timeSpan)
         {
             return timeSpan switch
             {

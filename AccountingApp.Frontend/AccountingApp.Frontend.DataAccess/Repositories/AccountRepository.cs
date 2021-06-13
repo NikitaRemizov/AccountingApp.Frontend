@@ -14,12 +14,12 @@ namespace AccountingApp.Frontend.DataAccess.Repositories
         {
         }
 
-        public async Task<(AccessToken, AccountingApiResult)> Login(User user)
+        public async Task<(AccessToken, DataAccessResult)> Login(User user)
         {
             return await Client.Post<AccessToken>("login" , user);
         }
 
-        public async Task<(AccessToken, AccountingApiResult)> Register(User user)
+        public async Task<(AccessToken, DataAccessResult)> Register(User user)
         {
             return await Client.Post<AccessToken>("register", user);
         }

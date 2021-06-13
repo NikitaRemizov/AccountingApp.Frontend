@@ -7,7 +7,7 @@ namespace AccountingApp.Frontend.DataAccess.Repositories.Interfaces
 {
     public interface IAccountRepository
     {
-        Task<(AccessToken, AccountingApiResult)> Register(User user);
-        Task<(AccessToken, AccountingApiResult)> Login(User user);
+        Task<(AccessToken, DataAccessResult)> Register(User user);
+        Task<(AccessToken, DataAccessResult)> Login(User user);
     }
 }

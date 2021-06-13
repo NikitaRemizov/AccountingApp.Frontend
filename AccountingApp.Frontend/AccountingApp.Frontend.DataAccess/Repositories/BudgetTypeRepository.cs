@@ -14,7 +14,7 @@ namespace AccountingApp.Frontend.DataAccess.Repositories
         {
         }
 
-        public async Task<(IEnumerable<BudgetType>, AccountingApiResult)> GetAll()
+        public async Task<(IEnumerable<BudgetType>, DataAccessResult)> GetAll()
         {
             return await Client.Get<List<BudgetType>>(_endpointPath);
         }
