@@ -1,5 +1,4 @@
 ﻿using AccountingApp.Frontend.Services.Interfaces;
-using AccountingApp.Shared.Models;
 using System.Threading.Tasks;
 
 namespace AccountingApp.Frontend.Utils.Extensions

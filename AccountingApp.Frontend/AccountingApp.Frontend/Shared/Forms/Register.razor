@@ -29,13 +29,11 @@
 
 @code { 
 
-    private bool IsOverlayVisible { get; set; }
-
     protected override async Task SignOperation()
     {
-        IsOverlayVisible = true;
+        ShowOverlay();
         await Account.Register(User);
-        IsOverlayVisible = false;
+        HideOverlay();
     }
 
     protected void OpenLoginDialog()

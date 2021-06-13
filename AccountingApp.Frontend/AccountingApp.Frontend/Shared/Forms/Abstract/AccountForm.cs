@@ -21,6 +21,8 @@ namespace AccountingApp.Frontend.Shared.Forms.Abstract
         [Inject]
         protected NavigationManager NavigationManager { get; set; }
 
+        protected bool IsOverlayVisible { get; set; }
+
         protected abstract Task SignOperation();
 
         protected async void HandleUserSubmit()
@@ -37,6 +39,18 @@ namespace AccountingApp.Frontend.Shared.Forms.Abstract
             User = new User();
             MudDialog.Close();
             NavigationManager.NavigateTo("/report");
+        }
+
+        protected void ShowOverlay()
+        {
+            IsOverlayVisible = true;
+            StateHasChanged();
+        }
+
+        protected void HideOverlay()
+        {
+            IsOverlayVisible = false;
+            StateHasChanged();
         }
     }
 }
