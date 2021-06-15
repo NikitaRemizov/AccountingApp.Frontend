@@ -50,7 +50,17 @@ namespace AccountingApp.Frontend.Services
 
         public async Task InitializeToken()
         {
-            var storageResult = await _browserStorage.GetAsync<AccessToken>(AccessTokenName);
+            ProtectedBrowserStorageResult<AccessToken> storageResult;
+            try
+            {
+                storageResult = await _browserStorage.GetAsync<AccessToken>(AccessTokenName);
+            }
+            catch (System.Security.Cryptography.CryptographicException)
+            {
+                IsAuthentificated = false;
+                return;
+            }
+
             if (!storageResult.Success)
             {
                 IsAuthentificated = false;
