@@ -1,7 +1,8 @@
 ﻿@inherits FieldBase
 
 <MudDatePicker Date="@Date" DateChanged="@DateChanged" 
-               Class="@Class" DateFormat="d" Label="@Label" PickerVariant="PickerVariant.Dialog" />
+               Class="@Class" DateFormat="d" Label="@Label" PickerVariant="PickerVariant.Dialog"
+               Validation="@Validation" MaxDate="DateTime.Today" />
 
 @code {
     [Parameter]
@@ -10,4 +11,19 @@
     public EventCallback<DateTime?> DateChanged { get; set; }
     [Parameter]
     public string Label { get; set; }
+
+    private Func<DateTime?, string> Validation = (date) =>
+    {
+        if (date is null)
+        {
+            return "Enter the correct date";
+        }
+
+        if (date > DateTime.Today)
+        {
+            return "The date must not be from the future";
+        }
+
+        return null;
+    };
 }
