@@ -4,7 +4,7 @@
 <MudNumericField @bind-Value="@BudgetChange.AmountInDollars" T="double" 
                  Immediate="true"  HideSpinButtons="true"
                  Class="@Class" Adornment="Adornment.Start" AdornmentText="$" Label="Amount"
-                 Required="true" />
+                 Validation="@Validation" />
 
 @code {
 
@@ -13,4 +13,14 @@
 
     [Parameter]
     public EventCallback<BudgetChange> BudgetChangeChanged { get; set; }
+
+    private Func<double, string> Validation = amount =>
+    {
+        // This check is required, because the MudNumericField component sets to zero any value in format '+XXX.XX'
+        if (amount == 0.0)
+        {
+            return "The amount field is 0 or it has incorrect format";
+        }
+        return null;
+    };
 }

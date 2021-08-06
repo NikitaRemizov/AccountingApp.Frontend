@@ -59,12 +59,12 @@ namespace AccountingApp.Frontend.Services
             );
         }
 
-        private IEnumerable<BudgetReport> FilterIncomeRecords(IEnumerable<BudgetReport> budgetReports)
+        private static IEnumerable<BudgetReport> FilterIncomeRecords(IEnumerable<BudgetReport> budgetReports)
         {
             return budgetReports.Where(r => r.Amount > 0);
         }
 
-        private IEnumerable<BudgetReport> FilterExpenseRecords(IEnumerable<BudgetReport> budgetReports)
+        private static IEnumerable<BudgetReport> FilterExpenseRecords(IEnumerable<BudgetReport> budgetReports)
         {
             return budgetReports
                 .Where(r => r.Amount < 0)

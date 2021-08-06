@@ -92,7 +92,10 @@
         {
             return;
         }
-        ModelItems = budgetChanges.ToList();
+        ModelItems = budgetChanges
+            .OrderByDescending(b => b.Date)
+            .ThenBy(b => b.BudgetType?.Name)
+            .ToList();
     }
 
     private async Task OpenEditDialog(BudgetChange budgetChange)
