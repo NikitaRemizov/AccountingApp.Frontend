@@ -60,7 +60,6 @@ namespace AccountingApp.Frontend
             }
             else
             {
-                app.UseExceptionHandler();
                 app.UseHsts();
             }
 
