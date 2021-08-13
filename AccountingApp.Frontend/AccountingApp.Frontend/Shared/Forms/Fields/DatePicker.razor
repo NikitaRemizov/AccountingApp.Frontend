@@ -19,7 +19,7 @@
             return "Enter the correct date";
         }
 
-        if (date > DateTime.Today)
+        if (date.Value.Date > DateTime.Today.Date)
         {
             return "The date must not be from the future";
         }

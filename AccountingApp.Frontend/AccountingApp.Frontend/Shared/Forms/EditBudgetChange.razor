@@ -5,7 +5,7 @@
 
 <FormDialog Header="Edit income/outcome">
     <Form>
-        <MudForm Model="@Model" @bind-IsValid="@IsValidationSuccessful">
+        <MudForm @ref="_form" Model="@Model" @bind-IsValid="@IsValidationSuccessful">
             <TypeSelectField @bind-BudgetChange="Model" BudgetTypes="BudgetTypes" />
             <AmountField @bind-BudgetChange="@Model" />
             <DatePicker @bind-Date="@Model.Date"/>
@@ -31,6 +31,7 @@
     }
 
     private IBudgetTypesService _budgetTypesService;
+    private MudForm _form;
 
     protected override async Task OnInitializedAsync()
     {
@@ -43,5 +44,15 @@
         var (budgetTypes, result) = await BudgetTypesService.GetAll();
         await ProcessResult(result, "The category information is not retreived");
         return budgetTypes;
+    }
+
+    protected override async Task HandleUserSubmit()
+    {
+        _form.Validate();
+        if (!IsValidationSuccessful)
+        {
+            return;
+        }
+        await base.HandleUserSubmit();
     }
 }

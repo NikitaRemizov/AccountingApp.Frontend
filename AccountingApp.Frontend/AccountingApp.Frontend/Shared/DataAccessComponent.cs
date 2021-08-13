@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AccountingApp.Frontend.Shared
 {
-    public class DataAccessComponent : ComponentBase
+    public abstract class DataAccessComponent : ComponentBase
     {
         [Inject]
         protected NavigationManager NavigationManager { get; set; }
@@ -22,8 +22,8 @@ namespace AccountingApp.Frontend.Shared
         {
             if (result == ServiceResult.Unauthorized)
             {
-                NavigationManager.NavigateToAuthentification();
                 await Account.Logout();
+                NavigationManager.NavigateToAuthentification();
             }
             if (result != ServiceResult.Ok)
             {
