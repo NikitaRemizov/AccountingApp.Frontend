@@ -1,10 +1,11 @@
 ﻿
 @inherits FieldBase
 
-<MudNumericField @bind-Value="@BudgetChange.AmountInDollars" T="double" 
-                 Immediate="true"  HideSpinButtons="true"
+<MudNumericField @bind-Value="@BudgetChange.AmountInDollars" T="double" @ref="_fieldReference"
+                 @onfocusin="@(async () => await _fieldReference.SelectAsync())"
+                 Immediate="true" DebounceInterval="100" HideSpinButtons="true"
                  Class="@Class" Adornment="Adornment.Start" AdornmentText="$" Label="Amount"
-                 Validation="@Validation" />
+                 Validation="@Validation" Required="true" />
 
 @code {
 
@@ -13,6 +14,8 @@
 
     [Parameter]
     public EventCallback<BudgetChange> BudgetChangeChanged { get; set; }
+
+    private MudNumericField<double> _fieldReference;
 
     private Func<double, string> Validation = amount =>
     {
