@@ -6,77 +6,66 @@
 
 @page "/report"
 
-<MudContainer MaxWidth="@MaxContentWidth">
-    <MudButton Color="@Color.Primary" OnClick="@SwitchReportTimeSpan">
-        @ReportTimeSpan
-    </MudButton>
-
-    <MudButton Color="@Color.Primary" OnClick="@SwitchReportType">
-        @ReportType
-    </MudButton>
-</MudContainer>
+<MudGrid Justify="Justify.Center">
+    <MudItem Class="pa-0" Style="max-width:min-content" xs="12" md="6">
+        <SwitchButtonGroup Class="ma-2 py-1" @bind-SelectedValue="ReportTimeSpan" Values="ReportTimeSpans" Selected="0" 
+                           OnValueChanged="@(async (BudgetReportTimeSpan value) => await SetReportTimeSpan(value))"/>
+    </MudItem>
+    <MudItem Class="pa-0" Style="max-width:min-content" xs="12" md="6">
+        <SwitchButtonGroup Class="ma-2 py-1" @bind-SelectedValue="ReportType" Values="ReportTypes" Selected="0" 
+                           OnValueChanged="@(async (BudgetReportType value) => await SetReportType(value))"/>
+    </MudItem>
+</MudGrid>
 
 @if (!ShowReport)
 {
-    <MudContainer Class="d-flex justify-center" MaxWidth="@MaxContentWidth">
-        <MudText Class="my-3" Typo="Typo.h5">
-            There is no data
+    <MudContainer Class="d-flex justify-center">
+        <MudText Class="my-3" Typo="Typo.h5" Align="Align.Center">
+            There is no income/expense report for this period
         </MudText>
     </MudContainer>
 }
 else
 {
-    <MudContainer MaxWidth="@MaxContentWidth" Class="main-grid mt-2" >
-        <MudGrid Class="align-content-center">
-            <MudItem Class="d-flex-column align-center" xs="12" md="5">
-                <MudContainer MaxWidth="MaxWidth.ExtraSmall">
-                    <MudCard Class="mb-4 " Style="overflow:hidden" Elevation="@ElevationLevel">
-                        <MudCardContent>
-                            <MudText Align="Align.Center" Typo="Typo.h5">
-                                Total $@(TotalText)
-                            </MudText>
-                        </MudCardContent>
-                    </MudCard>
-                </MudContainer>
-                <MudChart Class="justify-center" ChartType="@ChartType.Pie"
-                          Width="50%"
-                          InputData="@ChartData" @bind-SelectedIndex="@SelectedChartItemIndex"
-                          InputLabels="@ChartLabels" >
-                </MudChart>
-            </MudItem>
-            <MudItem Class="align-center" xs="12" md="7">
-                <MudContainer MaxWidth="MaxWidth.Large">
-                    <MudPaper Elevation="@ElevationLevel">
-                        <MudTable Items="@Reports" Breakpoint="Breakpoint.None" Style="align-items:baseline">
-                            <ColGroup>
-                                <col style="width: 50%" />
-                                <col style="width: 50%" />
-                            </ColGroup>
-                            <HeaderContent>
-                                <MudTh>Category</MudTh>
-                                <MudTh>Amount $</MudTh>
-                            </HeaderContent>
-                            <RowTemplate>
-                                <MudTd>@context.BudgetTypeName</MudTd>
-                                <MudTd>@context.AmountInDollars.ToString("F")</MudTd>
-                            </RowTemplate>
-                            <FooterContent>
-                            </FooterContent>
-                        </MudTable>
-                    </MudPaper>
-                </MudContainer>
-            </MudItem>
-        </MudGrid>
-    </MudContainer>
+    <MudGrid Class="align-content-center">
+        <MudItem Class="d-flex-column align-center" xs="12" md="5">
+            <MudContainer Class="py-3" MaxWidth="MaxWidth.ExtraSmall">
+                <MudText Typo="Typo.h6" Align="Align.Center" GutterBottom="true">
+                    @($"Total {ReportType.ToString().ToLower()} for the last {ReportTimeSpan.ToString().ToLower()}: ${TotalText}")
+                </MudText>
+            </MudContainer>
+            <MudChart Class="justify-center" ChartType="@ChartType.Pie"
+                      Width="50%"
+                      InputData="@ChartData" @bind-SelectedIndex="@SelectedChartItemIndex"
+                      InputLabels="@ChartLabels" ChartOptions="@ChartOptions"/>
+        </MudItem>
+        <MudItem Class="align-center" xs="12" md="7">
+            <MudContainer MaxWidth="MaxWidth.Large">
+                <MudTable Items="@Reports" Breakpoint="Breakpoint.None" Style="align-items:baseline" Height="50vh">
+                    <ColGroup>
+                        <col style="width: 50%" />
+                        <col style="width: 50%" />
+                    </ColGroup>
+                    <HeaderContent>
+                        <MudTh>Category</MudTh>
+                        <MudTh>Amount $</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd>@context.BudgetTypeName</MudTd>
+                        <MudTd>@context.AmountInDollars.ToString("F")</MudTd>
+                    </RowTemplate>
+                </MudTable>
+            </MudContainer>
+        </MudItem>
+    </MudGrid>
 }
 
 
 @code {
 
-    private const MaxWidth MaxContentWidth = MaxWidth.False;
-
-    private const int ElevationLevel = 1;
     private const string Untyped = "UNCATEGORIZED";
+
+    private static ChartOptions ChartOptions { get; }
 
     private bool ShowReport
         => Reports is not null && Reports.Any();
@@ -90,6 +79,36 @@ else
 
     private BudgetReportTimeSpan ReportTimeSpan { get; set; } = BudgetReportTimeSpan.Day;
     private BudgetReportType ReportType { get; set; } = BudgetReportType.Income;
+
+    private Variant DayButtonVariant { get; set; } = Variant.Filled;
+    private Variant MonthButtonVariant { get; set; } = Variant.Outlined;
+    private Variant IncomeButtonVariant { get; set; } = Variant.Filled;
+    private Variant ExpenseButtonVariant { get; set; } = Variant.Outlined;
+
+    private static BudgetReportTimeSpan[] ReportTimeSpans = new BudgetReportTimeSpan[]
+    {
+        BudgetReportTimeSpan.Day,
+        BudgetReportTimeSpan.Month,
+    };
+
+    private static BudgetReportType[] ReportTypes = new BudgetReportType[]
+    {
+        BudgetReportType.Income,
+        BudgetReportType.Expense,
+    };
+
+    static AccountingReport()
+    {
+        var defaultOptions = new ChartOptions();
+        var customPalete = new string[]
+        {
+            ThemeColors.Yellow, ThemeColors.DarkGoldenrod, ThemeColors.CandyPink,
+            ThemeColors.MossGreen, ThemeColors.CopperRed, ThemeColors.WintergreenDream,
+            ThemeColors.SteelBlue, ThemeColors.Citrine, ThemeColors.BlueGreen
+        };
+        ChartOptions = defaultOptions;
+        ChartOptions.ChartPalette = customPalete.Concat(defaultOptions.ChartPalette).ToArray();
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -109,25 +128,38 @@ else
         Reports = reports;
     }
 
-    private async Task SwitchReportTimeSpan()
+    private async Task SetReportTimeSpan(BudgetReportTimeSpan timeSpan)
     {
-        ReportTimeSpan = ReportTimeSpan switch
+        if (ReportTimeSpan == timeSpan)
         {
-            BudgetReportTimeSpan.Day => BudgetReportTimeSpan.Month,
-            BudgetReportTimeSpan.Month => BudgetReportTimeSpan.Day,
-            _ => BudgetReportTimeSpan.Day
-        };
+            return;
+        }
+        ReportTimeSpan = timeSpan;
+        SwitchTimeSpanButtonsStyle();
         await InitializeViewData();
     }
 
-    private async Task SwitchReportType()
+    private async Task SetReportType(BudgetReportType type)
     {
-        ReportType = ReportType switch
+        if (ReportType == type)
         {
-            BudgetReportType.Income => BudgetReportType.Expense,
-            BudgetReportType.Expense => BudgetReportType.Income,
-            _ => BudgetReportType.Income
-        };
+            return;
+        }
+        ReportType = type;
         await InitializeViewData();
+    }
+
+    private void SwitchTimeSpanButtonsStyle()
+    {
+        var tempVariant = DayButtonVariant;
+        DayButtonVariant = MonthButtonVariant;
+        MonthButtonVariant = tempVariant;
+    }
+
+    private void SwitchTypeButtonsStyle()
+    {
+        var tempVariant = IncomeButtonVariant;
+        IncomeButtonVariant = ExpenseButtonVariant;
+        ExpenseButtonVariant = tempVariant;
     }
 }

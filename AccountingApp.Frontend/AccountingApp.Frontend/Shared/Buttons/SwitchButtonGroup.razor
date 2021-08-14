@@ -1,0 +1,65 @@
+﻿
+@typeparam T
+
+<MudButtonGroup Class="@Class" OverrideStyles="false">
+    @for (int i = 0; i < Values.Length; i++)
+    {
+        int currentIndex = i;
+        <MudButton Size="Size.Small" Color="@Color.Primary" Variant="_variants[currentIndex]"
+                   OnClick="@(async () => await SwitchSelectedButton(currentIndex))">
+            @Values[currentIndex].ToString()
+        </MudButton>
+    }
+</MudButtonGroup>
+
+@code {
+
+    [Parameter]
+    public string Class { get; set; }
+
+    [Parameter]
+    public EventCallback<T> OnValueChanged { get; set; }
+
+    [Parameter]
+    public T[] Values { get; set; }
+
+    [Parameter]
+    public int Selected { get; set; }
+
+    [Parameter]
+    public T SelectedValue { get; set; }
+
+    [Parameter]
+    public EventCallback<T> SelectedValueChanged { get; set; }
+
+    private Variant[] _variants;
+
+    private int _selected;
+
+    protected override void OnInitialized()
+    {
+        _variants = Enumerable.Repeat(Variant.Outlined, Values.Length).ToArray();
+        _selected = Selected;
+        if (_selected >= _variants.Length)
+        {
+            _selected = 0;
+        }
+        _variants[_selected] = Variant.Filled;
+        SelectedValue = Values[_selected];
+    }
+
+    private async Task SwitchSelectedButton(int selectedNew)
+    {
+        SwitchButtonVariants(selectedNew);
+        SelectedValue = Values[selectedNew];
+        await OnValueChanged.InvokeAsync(Values[selectedNew]);
+        //StateHasChanged();
+    }
+
+    private void SwitchButtonVariants(int selectedNew)
+    {
+        _variants[_selected] = Variant.Outlined;
+        _selected = selectedNew;
+        _variants[_selected] = Variant.Filled;
+    }
+}

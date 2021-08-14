@@ -4,8 +4,21 @@
 
 @inject IBudgetTypesService BudgetTypesService
 
-<MudContainer MaxWidth="MaxWidth.Medium">
-    <MudTable Items="@ModelItems" Hover="true" Breakpoint="Breakpoint.None" Elevation="1" Height="80vh">
+<MudContainer MaxWidth="@ContentMaxWidth">
+
+    <MudGrid>
+        <MudItem xs="12" sm="5">
+            <MudText Typo="Typo.h5" Align="Align.Left">
+                Categories
+            </MudText>
+        </MudItem>
+        <MudItem xs="12" sm="7">
+            <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" 
+                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" />
+        </MudItem>
+    </MudGrid>
+
+    <MudTable Items="@ModelItems" Hover="true" Breakpoint="Breakpoint.None" Elevation="1" Filter="@Filter">
         <ColGroup>
             <col />
             <col class="button-column" />
@@ -16,19 +29,24 @@
                 <DeleteItemButton OnClick="@(async () => await Delete(context))" />
             </MudTd>
         </RowTemplate>
-        <PagerContent>
-            <MudTablePager DisableRowsPerPage="true"/>
-        </PagerContent>
     </MudTable>
 </MudContainer>
 
+<MudHidden >
+
+</MudHidden>
+
 <MudFab Class="button-fab" Size="Size.Large" IconSize="Size.Medium" 
         Color="Color.Primary" Icon="@Icons.Material.Filled.Add"
-        OnClick="@OpenCreateDialog"  />
+        OnClick="@OpenCreateDialog"/>
 
 @code {
 
     protected override IBudgetTypesService Service => BudgetTypesService;
+
+    private string _searchString = string.Empty;
+
+    private const MaxWidth ContentMaxWidth = MaxWidth.Medium;
 
     protected override async Task InitializeItemsList()
     {
@@ -48,5 +66,18 @@
             await InitializeItemsList();
             StateHasChanged();
         }, BudgetTypesService);
+    }
+
+    private bool Filter(BudgetType type)
+    {
+        if (string.IsNullOrWhiteSpace(_searchString))
+        {
+            return true;
+        }
+        if (type.Name.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+        return false;
     }
 }

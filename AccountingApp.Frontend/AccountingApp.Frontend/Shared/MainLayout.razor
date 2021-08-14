@@ -5,13 +5,13 @@
 @inject NavigationManager NavigationManager
 @inject IAccountService Account
 
-<MudThemeProvider />
+<MudThemeProvider Theme="MainTheme" />
 
 <MudLayout Class="outer">
-    <MudAppBar Elevation="1">
+    <MudAppBar Elevation="3">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" 
                        OnClick="@((e) => DrawerToggle())" />
-        <MudText Typo="Typo.h5" Class="ml-3">Accounting</MudText>
+        <MudText Typo="Typo.h5" Class="ml-3">Simple Accounting</MudText>
         <MudAppBarSpacer />
         @if (Account.IsAuthentificated)
         {
@@ -38,7 +38,32 @@
 </MudLayout>
 
 @code {
+
     private bool _drawerOpen = true;
+
+    private static MudTheme MainTheme = new MudTheme
+    {
+        Palette = new Palette
+        {
+            Primary = ThemeColors.Jet,
+            Secondary = ThemeColors.DarkGoldenrod,
+            Tertiary = ThemeColors.Yellow,
+
+            AppbarBackground = ThemeColors.Yellow,
+            AppbarText = ThemeColors.EerieBlack,
+
+            DrawerBackground = ThemeColors.Timberwolf,
+            DrawerIcon = ThemeColors.EerieBlack,
+            DrawerText = ThemeColors.EerieBlack,
+
+            Background = ThemeColors.Alabaster,
+            Surface = ThemeColors.Alabaster,
+
+            TextPrimary = ThemeColors.EerieBlack,
+
+            TableLines = ThemeColors.Timberwolf,
+        }
+    };
 
     public void Dispose()
     {

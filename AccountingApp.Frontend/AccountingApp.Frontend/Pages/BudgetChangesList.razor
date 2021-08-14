@@ -5,26 +5,26 @@
 @inject IBudgetChangesService BudgetChangesService
 @inject IBudgetTypesService BudgetTypesService
 
-<style>
-    .input-container {
-    }
-    .input-container > * {
-        width: 100%;
-        max-width: 30em;
-        min-width: 15em;
-    }
-</style>
-
-<MudContainer Class="input-container" MaxWidth="ContentMaxWidth">
-    <DatePicker Class="my-2"
-                Date="DateFrom" DateChanged="@SetFromDate" Label="From"/>
-    <DatePicker Class="my-2"
-                Date="DateTo" DateChanged="@SetToDate" Label="To"/>
+<MudContainer Class="mb-3" MaxWidth="ContentMaxWidth" >
+    <MudGrid Justify="Justify.FlexStart" >
+        <MudItem xs="12" md="3">
+            <DatePicker Date="DateFrom" DateChanged="@SetFromDate" Label="From"/>
+        </MudItem>
+        <MudItem xs="12" md="3">
+            <DatePicker Date="DateTo" DateChanged="@SetToDate" Label="To"/>
+        </MudItem>
+        <MudHidden Breakpoint="Breakpoint.Sm" Invert="false">
+            <MudItem Class="pa-0 ma-0" xs="12" md="2"/>
+        </MudHidden>
+        <MudItem xs="12" md="4">
+            <MudTextField @bind-Value="_searchString" Placeholder="Search" 
+                          Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" />
+        </MudItem>
+    </MudGrid>
 </MudContainer>
 
 <MudContainer MaxWidth="ContentMaxWidth" >
-    <MudTable Items="@ModelItems" Hover="true" Breakpoint="Breakpoint.Xs" Elevation="1"
-              Height="66vh" RowsPerPage="9" FixedHeader="true">
+    <MudTable Items="@ModelItems" Hover="true" Breakpoint="Breakpoint.Xs" Elevation="1" FixedHeader="true" Filter="@Filter">
         <ColGroup>
             <col style="min-width:17em"/>
             <col />
@@ -48,9 +48,6 @@
                 </MudElement>
             </MudTd>
         </RowTemplate>
-        <PagerContent>
-            <MudTablePager DisableRowsPerPage="true"/>
-        </PagerContent>
     </MudTable>
 </MudContainer>
 
@@ -71,6 +68,8 @@
     private DateTime DateTo => PickerDateTo ?? DateTime.Today;
 
     private IEnumerable<BudgetType> BudgetTypes { get; set; }
+
+    private string _searchString = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -146,5 +145,26 @@
             return;
         }
         BudgetTypes = budgetTypes;
+    }
+
+    private bool Filter(BudgetChange budgetChange)
+    {
+        if (string.IsNullOrWhiteSpace(_searchString))
+        {
+            return true;
+        }
+        if (budgetChange.AmountInDollars.ToString().Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+        if (budgetChange.BudgetType?.Name?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) ?? false)
+        {
+            return true;
+        }
+        if (budgetChange.Date?.ToString("d").Contains(_searchString, StringComparison.OrdinalIgnoreCase) ?? false)
+        {
+            return true;
+        }
+        return false;
     }
 }

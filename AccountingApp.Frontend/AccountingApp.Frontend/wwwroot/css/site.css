@@ -1,5 +1,5 @@
 ﻿body {
-    overflow:hidden;
+    overflow:scroll;
 }
 
 html, body {
@@ -16,7 +16,7 @@ html, body {
     position: fixed;
     bottom: 40px;
     right: 40px;
-    z-index: 1700;
+    z-index: 1250;
 }
 
 .button-column {

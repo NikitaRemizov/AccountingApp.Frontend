@@ -3,7 +3,7 @@
 
 @inherits CreateBudgetModelBase<BudgetChange>
 
-<FormDialog Header="Add new income/outcome">
+<FormDialog Header="Add new income/expense">
     <Form>
         <MudForm @ref="@_form" Model="@Model" @bind-IsValid="@IsValidationSuccessful">
             <TypeSelectField @bind-BudgetChange="Model" BudgetTypes="BudgetTypes" />
